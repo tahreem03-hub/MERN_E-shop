@@ -1,25 +1,58 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Form, Link } from 'react-router-dom'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
+import toast from 'react-hot-toast'
+import axios from "axios";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [visible, setVisible] = useState(false);
-    const [avatar, setAvatar] = useState(null);
+    const [avatar, setAvatar] = useState(null);       // File object, for FormData
+    const [avatarPreview, setAvatarPreview] = useState(null); // string, for <img>
 
 
     // Function to handle file input change
+
+
     const handleFileInputChange = (e) => {
         const file = e.target.files[0];
-         setAvatar(URL.createObjectURL(file));
+        if (file) {
+            setAvatar(file);
+            setAvatarPreview(URL.createObjectURL(file));
+        }
     };
 
     // Function to handle form submission
     const handleSubmit = async (e) => {
-        console.log('dddd')
+        e.preventDefault();
+
+        const config = { headers: { "Content-Type": "multipart/form-data" } };
+
+        const formData = new FormData();
+        formData.append("file", avatar)
+        formData.append("name", name)
+        formData.append("email", email)
+        formData.append("password", password)
+
+
+        try {
+            const { data } = await axios.post(`${import.meta.env.VITE_URL}/user/create-user`, formData, config, { credentials: true })
+            if (data.success) {
+                toast.success(data.message)
+                setEmail("");
+                setPassword("");
+                setName("");
+                setAvatar(null);
+                setAvatarPreview(null);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error.message);
+        }
     };
 
     return (
@@ -33,7 +66,7 @@ const SignUp = () => {
             {/* form */}
             <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
                 <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>  {/* why this div */}
-                    <form className='space-y-6'>
+                    <form className='space-y-6' onSubmit={handleSubmit}>
 
                         <div>
                             <label htmlFor="name" className='block text-sm font-medium text-gray-700'>
@@ -108,9 +141,9 @@ const SignUp = () => {
                             <div className="mt-2 flex items-center">
                                 {/* Avatar preview */}
                                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                                    {avatar ? (
+                                    {avatarPreview ? (
                                         <img
-                                            src={avatar}
+                                            src={avatarPreview}
                                             alt="avatar"
                                             className="h-full w-full object-cover rounded-full"
                                         />

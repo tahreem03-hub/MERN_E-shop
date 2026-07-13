@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 const dbConnect = () => {
     mongoose
-        .connect(process.env.DB_URL)
+        .connect(`${process.env.DB_URL}e-shop`)
         .then((data) => {
             console.log(`MongoDb connected: ${data.connection.host}`);
         })
