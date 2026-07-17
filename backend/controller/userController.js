@@ -77,7 +77,7 @@ router.post('/activation', catchAsyncError(async (req, res, next) => {
 
     try {
         const { activation_token } = req.body;
-        
+
         const newUser = jwt.verify(
             activation_token,
             process.env.ACTIVATION_SECRET
@@ -105,14 +105,34 @@ router.post('/activation', catchAsyncError(async (req, res, next) => {
         // Save the user to the database
         //await user.save();
 
-        sendToken(user, 201, res);
+        sendToken(user, 201, res, "Account activated successfully");
     } catch (error) {
-    return next(new ErrorHandler(error.message, 500));
+        return next(new ErrorHandler(error.message, 500));
     }
-}
-)
-)
+}))
 
+
+router.post('/login', catchAsyncError(async (req, res, next) => {
+    try {
+        const { email, password } = req.body
+        const user = await User.findOne({ email }).select("+password");
+        if (!user) {
+            return next(new ErrorHandler("User not found", 400))
+        }
+
+        const passwordMatched = await user.comparePassword(password);
+        if (!passwordMatched) {
+            return next(new ErrorHandler("Wrong password!! Try again", 400))
+        }
+
+        sendToken(user, 201, res, "Login Successful");
+
+    } catch (error) {
+        console.log(error)
+        return next(new ErrorHandler(error.message, 500));
+    }
+
+}))
 module.exports = router;
 
 {/*

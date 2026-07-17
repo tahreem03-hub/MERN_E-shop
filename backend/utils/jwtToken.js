@@ -1,5 +1,5 @@
 //create token and saving that in cookies
-const sendToken = (user, statusCode, res) => {
+const sendToken = (user, statusCode, res, message="Success") => {
   const token = user.getJwtToken();
 
   //Option for cookies
@@ -12,7 +12,7 @@ const sendToken = (user, statusCode, res) => {
 
   res.status(statusCode).cookie("token", token, options).json({
     success: true,
-    message: "Account activated successfully",
+    message,
     user,
     token,
   });

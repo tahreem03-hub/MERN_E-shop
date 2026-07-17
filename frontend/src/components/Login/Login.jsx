@@ -1,10 +1,37 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import axios from 'axios'
+import toast from 'react-hot-toast';
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
+
+    const handleSubmit = async (e) => {
+        const userCredential = {
+                email,
+                password,
+            }
+            e.preventDefault();
+        try {
+            const { data } = await axios.post(
+                `${import.meta.env.VITE_URL}/user/login`,
+                userCredential,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                }
+            );
+            console.log((data.message))
+            toast.success(data.message)
+        } catch (error) {
+            console.log(error.message)
+            toast.error(error.message)
+        }
+    }
 
 
     return (
@@ -18,7 +45,7 @@ const Login = () => {
             {/* form */}
             <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
                 <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>  {/* why this div */}
-                    <form className='space-y-6'>
+                    <form className='space-y-6' onSubmit={handleSubmit}>
 
                         <div>
                             <label htmlFor="email" className='block text-sm font-medium text-gray-700'>

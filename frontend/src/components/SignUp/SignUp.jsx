@@ -39,7 +39,7 @@ const SignUp = () => {
 
 
         try {
-            const { data } = await axios.post(`${import.meta.env.VITE_URL}/user/create-user`, formData, config, { credentials: true })
+            const { data } = await axios.post(`${import.meta.env.VITE_URL}/user/create-user`, formData, config)
             if (data.success) {
                 toast.success(data.message)
                 setEmail("");
