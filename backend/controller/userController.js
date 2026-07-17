@@ -8,6 +8,9 @@ const { upload } = require("../multer");
 const path = require("path");
 const jwt = require('jsonwebtoken');
 const sendMail = require("../utils/sendMail");
+const catchAsyncError = require("../middleware/catchAsyncError");
+const sendToken = require("../utils/jwtToken");
+const { json } = require("stream/consumers");
 
 
 const activation_Token = async (user) => {
@@ -46,7 +49,7 @@ router.post('/create-user', upload.single("file"), async (req, res, next) => {
             password,
             avatar: fileURL
         }
-        const activation_token = activation_Token(userData);
+        const activation_token = await activation_Token(userData);
         const activationURL = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/activation/${activation_token}`;
 
         try {
@@ -69,6 +72,46 @@ router.post('/create-user', upload.single("file"), async (req, res, next) => {
         res.status(500).json({ success: false, message: error.message });
     }
 });
+
+router.post('/activation', catchAsyncError(async (req, res, next) => {
+
+    try {
+        const { activation_token } = req.body;
+        
+        const newUser = jwt.verify(
+            activation_token,
+            process.env.ACTIVATION_SECRET
+        );
+
+        if (!newUser) {
+            return next(new ErrorHandler("Invalid token", 400));
+        }
+
+        const { name, email, password, avatar } = newUser;
+
+        let user = await User.findOne({ email });
+
+        if (user) {
+            return next(new ErrorHandler("User already exists", 400));
+        }
+
+        user = await User.create({
+            name,
+            email,
+            password,
+            avatar,
+        });
+
+        // Save the user to the database
+        //await user.save();
+
+        sendToken(user, 201, res);
+    } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+    }
+}
+)
+)
 
 module.exports = router;
 
