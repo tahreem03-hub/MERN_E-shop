@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import axios from 'axios'
 import toast from 'react-hot-toast';
@@ -7,6 +7,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         const userCredential = {
@@ -25,11 +26,13 @@ const Login = () => {
                     withCredentials: true,
                 }
             );
-            console.log((data.message))
-            toast.success(data.message)
+            if(data.success){
+                toast.success(data.message)
+                navigate('/')
+            }
         } catch (error) {
-            console.log(error.message)
-            toast.error(error.message)
+            console.log(error)
+            toast.error(error.response.data.message)
         }
     }
 

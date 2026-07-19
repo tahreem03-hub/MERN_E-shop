@@ -11,6 +11,8 @@ const sendMail = require("../utils/sendMail");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const sendToken = require("../utils/jwtToken");
 const { json } = require("stream/consumers");
+const { isAuthenticated } = require("../middleware/auth");
+const user = require("../models/user");
 
 
 const activation_Token = async (user) => {
@@ -133,6 +135,26 @@ router.post('/login', catchAsyncError(async (req, res, next) => {
     }
 
 }))
+
+// load user
+router.get('/getUser',isAuthenticated, catchAsyncError(async(req, res,next)=>{
+    try {
+        const user = await User.findById(req.user.id)
+        if (!user) {
+        return next(new ErrorHandler("User does not exist", 400));
+      }
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+
 module.exports = router;
 
 {/*
