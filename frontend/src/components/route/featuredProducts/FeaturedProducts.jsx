@@ -14,14 +14,11 @@ const FeaturedProducts = () => {
   return (
     <div className=' mx-12 my-4'>
       <h1 className='font-bold text-5xl text-[#2E294E] py-3'>Featured Products</h1>
-      
-      <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5'>
-        {data && data.length > 0 ? (
-          data.map((i, index) =>
-            <ProductCard data={i} key={index} />
-          )
-        ) : null
-        }
+
+      <div className="flex flex-wrap gap-2">
+        {data?.map((item, index) => (
+          <ProductCard key={index} data={item} />
+        ))}
       </div>
 
 

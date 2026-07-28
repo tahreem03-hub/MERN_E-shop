@@ -319,6 +319,7 @@ export const productData = [
       },
       ratings: 4.2,
     },
+    price:1000,
     discountPrice: 1099,
     rating: 5,
     totalSell: 80,
