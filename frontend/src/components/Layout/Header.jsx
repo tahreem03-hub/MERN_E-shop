@@ -52,7 +52,7 @@ const Header = () => {
           {/* search result */}
 
           {searchData && searchData.length > 0 ? (
-            <div className='absolute top-12 right-1 bg-[#f1e8ec] min-h-[30vh] rounded-2xl z-999'>
+            <div className='absolute top-12 right-1 bg-[#f1e8ec] min-h-[30vh] rounded-2xl z-10'>
               {
                 searchData.map((i, index) => (
                   <Link to='/pro' key={index}>
@@ -77,7 +77,7 @@ const Header = () => {
 
       </div>
 
-      <div className='sticky top-0 z-999 relative bg-[#2E294E] h-16 w-100vh p-2 flex items-center justify-evenly'>
+      <div className='sticky top-0 z-9 relative bg-[#2E294E] h-16 w-full p-2 flex items-center justify-evenly'>
         {/*categories*/}
         <div className='flex bg-[#f1e8ec] rounded-t-2xl items-center px-6 py-1'
           onClick={handleClick}>

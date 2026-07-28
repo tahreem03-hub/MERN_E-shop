@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const DropDown = () => {
   return (
-    <div className='absolute top-17 left-45 bg-[#f1e8ec] rounded-b-2xl'>
+    <div className='absolute top-17 left-2 md:left-45 bg-[#f1e8ec] rounded-b-2xl'>
       {
         productData.map((i, index)=>{
           return (

@@ -7,7 +7,7 @@
 
 :root {
   --primary: #0f172a;
-  --primary-light: #1e293b;
+  --primary-light: #f1e8ec;
   --accent: #c9a45c;
   --bg: #f8f9fb;
   --text: #1e293b;
@@ -25,6 +25,15 @@ body {
   user-select: none;          /* by using this we won't be able to select text*/   
 }
 
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
 
 input,
 select {
@@ -71,3 +80,4 @@ input[type="number"] {
 ::-webkit-scrollbar-thumb:hover {
   background: #b08e4a;
 }
+
