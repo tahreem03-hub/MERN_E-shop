@@ -11,12 +11,18 @@ import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
 import ActivationPage from './pages/ActivationPage'
 import HomePage from  './pages/HomePage'
+import BestSelling from './pages/BestSelling'
+import ProductPage from './pages/ProductPage'
+import { useSelector } from 'react-redux'
 
 const App = () => {
+
 
   useEffect(()=>{
     Store.dispatch(loadUser());
   }, [])
+
+
   
   return (
     <>
@@ -30,6 +36,10 @@ const App = () => {
       <Route path='/login' element={<LoginPage/>}/>
       <Route path='/sign-up' element={<SignUpPage/>}/>
       <Route path='/activation/:activation_token' element={<ActivationPage/>}/>
+      <Route path='/best-selling' element={<BestSelling/>}/>
+      <Route path='/products' element={<ProductPage/>}/>
+
+
     </Routes>
     </>
   )

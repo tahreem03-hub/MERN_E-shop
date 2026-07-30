@@ -15,7 +15,7 @@ const BestDeals = () => {
     <div className=' mx-12 my-4'>
       <h1 className='font-bold text-5xl text-[#2E294E] py-3'>Best Deals</h1>
 
-      <div className='flex flex-wrap gap-2'>
+      <div className='flex flex-wrap gap-6'>
         {data && data.length > 0 ? (
           data.map((i, index) =>
             <ProductCard data={i} key={index} />

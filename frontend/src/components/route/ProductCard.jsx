@@ -48,7 +48,7 @@ const ProductCard = ({ data }) => {
         </div>
 
         <div className='flex justify-between'>
-          <h1 className='text-[#2E294E] font-medium text-xl mb-4'>Title prnmo</h1>
+          <h1 className='text-[#2E294E] font-medium text-xl mb-4'>{data?.name?.length > 10 ? data.name.slice(0, 7) + '..' : data.name}</h1>
           <h1 className='text-md text-teal-500'>{data.totalSell} sold</h1>
         </div>
 
@@ -66,7 +66,7 @@ const ProductCard = ({ data }) => {
           </div>
         </div>
       </div>
-      
+
       <div className="group absolute top-15 left-4">
         <Heart
           className={`text-[#f1e8ec] cursor-pointer ${click ? "fill-[#4b4284]" : ""}`}

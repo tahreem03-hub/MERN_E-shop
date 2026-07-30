@@ -5,10 +5,13 @@ import { Link } from 'react-router-dom'
 import Navbar from './Navbar'
 import DropDown from './DropDown'
 import logo from '../../../public/logo.png'
+import { useSelector } from 'react-redux'
 
 
 
 const Header = () => {
+
+  const { isAuthenticated, user } = useSelector((state) => state.user);
 
   const [searchTerm, setSearchTerm] = useState("")
   const [searchData, setSearchData] = useState(null)
@@ -27,6 +30,7 @@ const Header = () => {
   const handleClick = () => {
     setActive(!active)
   }
+
   return (
     <div>
 
@@ -94,7 +98,24 @@ const Header = () => {
         <div className='flex text-white space-x-1'>
           <Heart />
           <ShoppingCart />
-          <User />
+          {isAuthenticated ?
+            (
+              <div>
+                <Link to={'/profile'}>
+                  <img
+                    src={`http://localhost:8000/uploads/${user.avatar}`}
+                    alt=""
+                    className="w-6 h-6 rounded-full"
+                  />
+                </Link>
+              </div>
+
+            ) : (
+              <Link to={'/login'}>
+                <User />
+              </Link>
+            )
+          }
         </div>
 
       </div>

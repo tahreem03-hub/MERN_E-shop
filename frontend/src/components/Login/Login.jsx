@@ -1,13 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import axios from 'axios'
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 const Login = () => {
+
+   
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
     const navigate = useNavigate()
+
 
     const handleSubmit = async (e) => {
         const userCredential = {
@@ -29,6 +34,7 @@ const Login = () => {
             if(data.success){
                 toast.success(data.message)
                 navigate('/')
+                window.location.reload(true);
             }
         } catch (error) {
             console.log(error)

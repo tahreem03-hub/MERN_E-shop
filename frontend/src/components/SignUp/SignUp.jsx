@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Link } from 'react-router-dom'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { RxAvatar } from "react-icons/rx";
 import toast from 'react-hot-toast'
 import axios from "axios";
 
+
 const SignUp = () => {
+   
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
@@ -13,10 +16,9 @@ const SignUp = () => {
     const [avatar, setAvatar] = useState(null);       // File object, for FormData
     const [avatarPreview, setAvatarPreview] = useState(null); // string, for <img>
 
+    
 
     // Function to handle file input change
-
-
     const handleFileInputChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -54,6 +56,8 @@ const SignUp = () => {
             toast.error(error?.response?.data?.message || error.message);
         }
     };
+
+    
 
     return (
         <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-8 lg:px-8'>

@@ -15,7 +15,7 @@ const FeaturedProducts = () => {
     <div className=' mx-12 my-4'>
       <h1 className='font-bold text-5xl text-[#2E294E] py-3'>Featured Products</h1>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-6">
         {data?.map((item, index) => (
           <ProductCard key={index} data={item} />
         ))}
