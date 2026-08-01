@@ -1,184 +1,164 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  CreditCard,
-} from "lucide-react";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Mail, Phone, MapPin, CreditCard, Send } from 'lucide-react'
+import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa'
 
-import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
+const companyLinks = [
+  { label: 'About Us', to: '/about-us' },
+  { label: 'Careers', to: '/careers' },
+  { label: 'Store Locations', to: '/store-locations' },
+  { label: 'Our Blog', to: '/our-blog' },
+]
+
+const supportLinks = [
+  { label: 'FAQ', to: '/faq' },
+  { label: 'Contact Us', to: '/contact-us' },
+  { label: 'Shipping', to: '/shipping' },
+  { label: 'Live Chat', to: '/chat' },
+]
+
+const socials = [FaFacebookF, FaTwitter, FaInstagram, FaYoutube]
+
+const FooterLink = ({ to, children }) => (
+  <Link
+    to={to}
+    className="group inline-flex items-center text-white/70 text-sm transition-colors hover:text-white"
+  >
+    <span className="w-0 group-hover:w-3 h-px bg-[#dfb3c7] mr-0 group-hover:mr-2 transition-all duration-300" />
+    {children}
+  </Link>
+)
 
 const Footer = () => {
   const handleSubmit = () => {
     // newsletter logic here
-  };
+  }
 
   return (
-    <>
+    <footer>
       {/* Newsletter */}
-      <div className="bg-[#2E294E]/90 flex items-center justify-between px-7 py-5">
-        <h1 className="text-white font-bold text-3xl w-[40%]">
-          <span className="text-[#dfb3c7]">Subscribe </span>
-          us to get news, events and offers.
-        </h1>
+      <div className="bg-[#2E294E]/95 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <h1 className="text-white font-bold text-2xl md:text-3xl leading-snug md:max-w-md">
+            <span className="text-[#dfb3c7]">Subscribe </span>
+            to get news, events and offers.
+          </h1>
 
-        <div className="flex h-10 items-center">
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            className="bg-[#f1e8ec] rounded p-2 outline-none w-72"
-            placeholder="Enter your email..."
-          />
-
-          <button
-            className="bg-[#dfb3c7] rounded text-[#2E294E] px-5 py-[7px] ml-5 hover:bg-[#efbfd5]"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
+          <div className="flex w-full md:w-auto items-center gap-3">
+            <input
+              type="email"
+              name="email"
+              autoComplete="email"
+              className="bg-[#f1e8ec] rounded-lg px-4 py-2.5 text-sm text-[#2E294E] placeholder:text-[#2E294E]/50 outline-none w-full md:w-72 focus:ring-2 focus:ring-[#dfb3c7] transition-shadow"
+              placeholder="Enter your email..."
+            />
+            <button
+              onClick={handleSubmit}
+              className="flex items-center gap-2 bg-[#dfb3c7] rounded-lg text-[#2E294E] font-medium px-5 py-2.5 shrink-0 transition-colors hover:bg-[#efbfd5]"
+            >
+              Submit
+              <Send className="w-4" />
+            </button>
+          </div>
         </div>
       </div>
-
 
       {/* Main Footer */}
-      <div className="bg-[#2E294E] px-7 py-8 text-white">
+      <div className="bg-[#2E294E] text-white">
+        <div className="max-w-7xl mx-auto px-6 md:px-10 py-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
+            {/* Brand */}
+            <div className="col-span-2 lg:col-span-1">
+              <img src="/logo.png" alt="Ellie Crafts" className="w-28 mb-4" />
+              <p className="text-white/70 text-sm leading-6 max-w-xs">
+                Bringing quality products with a smooth shopping experience. Your
+                trusted place for amazing deals and everyday essentials.
+              </p>
 
-        <div className="flex justify-between">
+              <div className="flex gap-3 mt-6">
+                {socials.map((Icon, i) => (
+                  <a
+                    key={i}
+                    href="#"
+                    className="bg-[#dfb3c7] p-2.5 rounded-full text-[#2E294E] transition-transform duration-200 hover:scale-110 hover:bg-[#efbfd5]"
+                  >
+                    <Icon size={16} />
+                  </a>
+                ))}
+              </div>
+            </div>
 
-          {/* Brand */}
-          <div className="w-[30%]">
-            <img
-              src="/logo.png"
-              alt="Logo"
-              className="w-28 mb-3"
-            />
+            {/* Company */}
+            <div className="flex flex-col space-y-3">
+              <h2 className="text-[#dfb3c7] text-xs font-semibold uppercase tracking-[0.15em] mb-1">
+                Company
+              </h2>
+              {companyLinks.map((l) => (
+                <FooterLink key={l.label} to={l.to}>
+                  {l.label}
+                </FooterLink>
+              ))}
+            </div>
 
-            <p className="text-white/70 text-sm leading-6">
-              Bringing quality products with a smooth shopping experience.
-              Your trusted place for amazing deals and everyday essentials.
+            {/* Support */}
+            <div className="flex flex-col space-y-3">
+              <h2 className="text-[#dfb3c7] text-xs font-semibold uppercase tracking-[0.15em] mb-1">
+                Support
+              </h2>
+              {supportLinks.map((l) => (
+                <FooterLink key={l.label} to={l.to}>
+                  {l.label}
+                </FooterLink>
+              ))}
+            </div>
+
+            {/* Contact */}
+            <div>
+              <h2 className="text-[#dfb3c7] text-xs font-semibold uppercase tracking-[0.15em] mb-4">
+                Contact
+              </h2>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <Mail size={16} className="text-[#dfb3c7] shrink-0" />
+                  support@example.com
+                </div>
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <Phone size={16} className="text-[#dfb3c7] shrink-0" />
+                  +92 300 1234567
+                </div>
+                <div className="flex items-center gap-2 text-white/70 text-sm">
+                  <MapPin size={16} className="text-[#dfb3c7] shrink-0" />
+                  Faisalabad, Pakistan
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment + Copyright */}
+          <div className="border-t border-white/15 mt-10 pt-6 flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <p className="text-white/60 text-sm order-2 sm:order-1">
+              © {new Date().getFullYear()} Ellie Crafts. All rights reserved.
             </p>
 
-            <div className="flex gap-3 mt-5">
-              <a href="#" className="bg-[#dfb3c7] p-2 rounded-full text-[#2E294E] hover:scale-110 transition">
-                <FaFacebookF size={18} />
-              </a>
-
-              <a href="#" className="bg-[#dfb3c7] p-2 rounded-full text-[#2E294E] hover:scale-110 transition">
-                <FaTwitter size={18} />
-              </a>
-
-              <a href="#" className="bg-[#dfb3c7] p-2 rounded-full text-[#2E294E] hover:scale-110 transition">
-                <FaInstagram size={18} />
-              </a>
-
-              <a href="#" className="bg-[#dfb3c7] p-2 rounded-full text-[#2E294E] hover:scale-110 transition">
-                <FaYoutube size={18} />
-              </a>
+            <div className="flex items-center gap-3 text-white/70 order-1 sm:order-2">
+              <CreditCard size={20} className="text-[#dfb3c7]" />
+              <span className="text-sm hidden sm:inline">Secure Payments</span>
+              <div className="flex gap-2 sm:ml-2">
+                {['VISA', 'Mastercard', 'PayPal'].map((p) => (
+                  <span
+                    key={p}
+                    className="bg-white/5 border border-white/10 px-3 py-1 rounded-md text-xs"
+                  >
+                    {p}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-
-
-          {/* Company */}
-          <div className="flex flex-col space-y-2">
-            <h1 className="text-[#dfb3c7] font-medium mb-2">
-              Company
-            </h1>
-
-            <Link className="text-white/70 text-sm" to="/about-us">
-              About Us
-            </Link>
-            <Link className="text-white/70 text-sm" to="/careers">
-              Careers
-            </Link>
-            <Link className="text-white/70 text-sm" to="/store-locations">
-              Store Locations
-            </Link>
-            <Link className="text-white/70 text-sm" to="/our-blog">
-              Our Blog
-            </Link>
-          </div>
-
-
-          {/* Support */}
-          <div className="flex flex-col space-y-2">
-            <h1 className="text-[#dfb3c7] font-medium mb-2">
-              Support
-            </h1>
-
-            <Link className="text-white/70 text-sm" to="/faq">
-              FAQ
-            </Link>
-            <Link className="text-white/70 text-sm" to="/contact-us">
-              Contact Us
-            </Link>
-            <Link className="text-white/70 text-sm" to="/shipping">
-              Shipping
-            </Link>
-            <Link className="text-white/70 text-sm" to="/chat">
-              Live Chat
-            </Link>
-          </div>
-
-
-          {/* Contact */}
-          <div>
-            <h1 className="text-[#dfb3c7] font-medium mb-3">
-              Contact
-            </h1>
-
-            <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
-              <Mail size={16}/>
-              support@example.com
-            </div>
-
-            <div className="flex items-center gap-2 text-white/70 text-sm mb-2">
-              <Phone size={16}/>
-              +92 300 1234567
-            </div>
-
-            <div className="flex items-center gap-2 text-white/70 text-sm">
-              <MapPin size={16}/>
-              Faisalabad, Pakistan
-            </div>
-          </div>
-
         </div>
-
-
-        {/* Payment + Copyright */}
-        <div className="border-t border-white/20 mt-8 pt-5 flex justify-between items-center">
-
-          <p className="text-white/60 text-sm">
-            © 2026 Your Brand. All rights reserved.
-          </p>
-
-
-          <div className="flex items-center gap-3 text-white/70">
-            <CreditCard size={20}/>
-            <span className="text-sm">
-              Secure Payments
-            </span>
-
-            <div className="flex gap-2 ml-3">
-              <span className="bg-white/10 px-3 py-1 rounded text-xs">
-                VISA
-              </span>
-              <span className="bg-white/10 px-3 py-1 rounded text-xs">
-                Mastercard
-              </span>
-              <span className="bg-white/10 px-3 py-1 rounded text-xs">
-                PayPal
-              </span>
-            </div>
-          </div>
-
-        </div>
-
       </div>
-    </>
-  );
-};
+    </footer>
+  )
+}
 
-export default Footer;
+export default Footer

@@ -1,81 +1,104 @@
-import { Heart, ShoppingBag, Star } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { Heart, ShoppingBag, Star, Clock } from 'lucide-react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// how to set width of category so it just takes the content width
 const ProductCard = ({ data }) => {
   const [click, setClick] = useState(false)
-  const [open, setOpen] = useState(false)
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const calculateDiscount = () => {
-    const discount = data.price - data.discountPrice;
-    const percentage = (discount / data.price) * 100;
-    return Math.round(percentage);
+    const discount = data.price - data.discountPrice
+    const percentage = (discount / data.price) * 100
+    return Math.round(percentage)
   }
 
-  const percentage = calculateDiscount();
+  const percentage = calculateDiscount()
+  const id = data.id
+  const rating = Math.round(data?.rating || 0)
+
   return (
-    <div className='relative h-95 w-55 rounded-t-4xl px-2 bg-[#f1e8ec] gradient-to-[#f1e8ec] m-2'
-    >
-
-      <div className='flex p-1 justify-between mx-1 my-2'>
-        <h1 className='font-bold text-sm'>{percentage ? percentage : 0}% sales off</h1>
-        <h1 className='font-bold text-sm'>timer</h1>
-      </div>
-
-
-      <img src={data?.imageUrl[0]?.url} alt=""
-        className='rounded-4xl h-50 w-full'
-        onClick={() => navigate('/productdetail')} />
-
-
-      <div className='p-1'
-        onClick={() => navigate('/productdetail')}>
-        <div className='flex  justify-between'>
-          <h1 className="text-[#2E294E] text-xs bg-pink-50 my-2 min-w-15 text-center rounded p-0.5">
-            {data?.category?.length > 10
-              ? data.category.slice(0, 8) + "..."
-              : data?.category}
-          </h1>
-          <div className='flex items-center'>
-            <Star className='w-4.5 ml-0.5 text-yellow-500 fill-yellow-500' />
-            <Star className='w-4.5 ml-0.5 text-yellow-500 fill-yellow-500' />
-            <Star className='w-4.5 ml-0.5 text-yellow-500 fill-yellow-500' />
-            <Star className='w-4.5 ml-0.5 text-yellow-500 fill-yellow-500' />
-            <Star className='w-4.5 ml-0.5 text-yellow-500' />
-          </div>
-        </div>
-
-        <div className='flex justify-between'>
-          <h1 className='text-[#2E294E] font-medium text-xl mb-4'>{data?.name?.length > 10 ? data.name.slice(0, 7) + '..' : data.name}</h1>
-          <h1 className='text-md text-teal-500'>{data.totalSell} sold</h1>
-        </div>
-
-        <div className='flex justify-between h-9'>
-          <div>
-            <h1 className='line-through text-xs text-[#8e88b6]'>RS {data.price}</h1>
-            <h1 className='text-[#2E294E]'>RS {data.discountPrice}</h1>
-          </div>
-
-          <div className='flex items-center gap-1 bg-[#2E294E] rounded-full px-2'>
-            <ShoppingBag className='w-4 text-white' strokeWidth={2} />
-            <button className=' text-white text-xs'>
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="group absolute top-15 left-4">
-        <Heart
-          className={`text-[#f1e8ec] cursor-pointer ${click ? "fill-[#4b4284]" : ""}`}
-          onClick={() => setClick(!click)}
-        />
-
-        <span className="absolute hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded -top-8">
-          Add to wishlist
+    <div className="group relative flex w-full max-w-[260px] flex-col overflow-hidden rounded-3xl border border-[#f2e4ea] bg-[#f1e8ec] transition hover:-translate-y-0.5 hover:shadow-lg">
+      {/* meta row */}
+      <div className="flex items-center justify-between px-4 pt-4">
+        {percentage > 0 ? (
+          <span className="rounded-full bg-[#B5316B] px-2.5 py-0.5 text-xs font-semibold text-white">
+            {percentage}% off
+          </span>
+        ) : (
+          <span />
+        )}
+        <span className="flex items-center gap-1 text-xs text-[#6b6480]">
+          <Clock className="h-3.5 w-3.5" strokeWidth={2} /> timer
         </span>
+      </div>
+
+      {/* image */}
+      <div className="relative px-4 pt-3">
+        <div className="flex h-44 items-center justify-center rounded-2xl bg-white p-3">
+          <img
+            src={data?.imageUrl[0]?.url}
+            alt={data?.name}
+            onClick={() => navigate(`/products/${id}`)}
+            className="max-h-full max-w-full cursor-pointer object-contain"
+          />
+        </div>
+
+        {/* wishlist */}
+        <div className="group/heart absolute right-6 top-5">
+          <button
+            aria-label="Add to wishlist"
+            onClick={() => setClick(!click)}
+            className="grid h-9 w-9 place-items-center rounded-full bg-white shadow-sm transition hover:scale-105"
+          >
+            <Heart
+              className={`h-5 w-5 cursor-pointer transition ${
+                click ? 'fill-[#B5316B] text-[#B5316B]' : 'fill-transparent text-[#2E294E]'
+              }`}
+            />
+          </button>
+          <span className="pointer-events-none absolute right-0 -top-8 hidden whitespace-nowrap rounded bg-[#2E294E] px-2 py-1 text-xs text-white group-hover/heart:block">
+            Add to wishlist
+          </span>
+        </div>
+      </div>
+
+      {/* info (clicking navigates, same as before) */}
+      <div className="flex flex-1 flex-col px-4 pb-4 pt-3" onClick={() => navigate(`/products/${id}`)}>
+        <div className="flex items-center justify-between gap-2">
+          {/* w-fit makes the pill hug its text; max-w + truncate caps long names */}
+          <span className="w-fit max-w-[120px] truncate rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-[#2E294E]">
+            {data?.category}
+          </span>
+          <div className="flex items-center">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <Star
+                key={i}
+                className={`h-4 w-4 ${i <= rating ? 'fill-[#F5B301] text-[#F5B301]' : 'fill-transparent text-[#d9d3dd]'}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-2 flex items-start justify-between gap-2">
+          <h1 className="truncate text-lg font-semibold text-[#2E294E]" title={data?.name}>
+            {data?.name}
+          </h1>
+          <span className="whitespace-nowrap text-sm text-emerald-600">{data.totalSell} sold</span>
+        </div>
+
+        <div className="mt-auto flex items-end justify-between pt-4">
+          <div className="leading-tight">
+            {percentage > 0 && (
+              <p className="text-xs text-[#a89fb0] line-through">RS {data.price}</p>
+            )}
+            <p className="text-lg font-bold text-[#2E294E]">RS {data.discountPrice}</p>
+          </div>
+
+          <div className="flex items-center gap-1.5 rounded-full bg-[#2E294E] px-3 py-2 transition hover:opacity-90">
+            <ShoppingBag className="h-4 w-4 text-white" strokeWidth={2} />
+            <button className="text-xs font-semibold text-white">Add to cart</button>
+          </div>
+        </div>
       </div>
     </div>
   )

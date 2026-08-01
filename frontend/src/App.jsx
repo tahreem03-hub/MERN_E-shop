@@ -14,6 +14,7 @@ import HomePage from  './pages/HomePage'
 import BestSelling from './pages/BestSelling'
 import ProductPage from './pages/ProductPage'
 import { useSelector } from 'react-redux'
+import ProductDetail from './pages/ProductDetail'
 
 const App = () => {
 
@@ -38,6 +39,8 @@ const App = () => {
       <Route path='/activation/:activation_token' element={<ActivationPage/>}/>
       <Route path='/best-selling' element={<BestSelling/>}/>
       <Route path='/products' element={<ProductPage/>}/>
+      <Route path='/products/:id' element={<ProductDetail/>}/>
+
 
 
     </Routes>
