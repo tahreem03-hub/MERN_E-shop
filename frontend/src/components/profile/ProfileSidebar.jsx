@@ -7,6 +7,7 @@ import {
     Truck,
     Undo2,
     User,
+    CreditCard,
 } from "lucide-react";
 import React from "react";
 import { NavLink } from "react-router-dom";
@@ -19,25 +20,54 @@ const ProfileSidebar = () => {
         { icon: MessageSquareMore, title: "Inbox", path: "/profile/inbox" },
         { icon: Truck, title: "Track Order", path: "/profile/track-order" },
         { icon: MapPinHouse, title: "Address", path: "/profile/address" },
-        { icon: Lock, title: "Change Password", path: "/profile/change-password" },
-        { icon: LogOut, title: "Logout", path:"/profile/logout"},
+        {
+            icon: CreditCard,
+            title: "Payment Methods",
+            path: "/profile/payment-methods",
+        },
+        {
+            icon: Lock,
+            title: "Change Password",
+            path: "/profile/change-password",
+        },
     ];
 
+    const handleLogout = () => {
+        // Logout API will be added later
+    };
+
     return (
-        <div className="w-64">
-            <div className="flex flex-col gap-2">
+        <aside className="w-full lg:w-64">
+            <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
                 {navItems.map(({ icon: Icon, title, path }) => (
                     <NavLink
                         to={path}
                         key={title}
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition"
+                        className={({ isActive }) =>
+                            `flex shrink-0 items-center gap-3 px-4 py-3 rounded-lg
+              transition-all duration-200
+              ${isActive
+                                ? "bg-[#f1e8ec] text-[#2E294E] font-medium"
+                                : "text-[#2E294E] hover:bg-[#f1e8ec]"
+                            }`
+                        }
                     >
                         <Icon size={20} />
                         <span>{title}</span>
                     </NavLink>
                 ))}
+
+                <button
+                    onClick={handleLogout}
+                    className="flex shrink-0 items-center gap-3 px-4 py-3 rounded-lg
+                     text-[#2E294E] hover:bg-[#f1e8ec]
+                     transition-all duration-200 text-left"
+                >
+                    <LogOut size={20} />
+                    <span>Logout</span>
+                </button>
             </div>
-        </div>
+        </aside>
     );
 };
 

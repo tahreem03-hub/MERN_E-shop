@@ -7,7 +7,7 @@ const ProfileLayout = () => {
     return (
         <>
             <Header />
-            <div className="flex">
+            <div className="flex flex-col lg:flex-row">
                 <ProfileSidebar />
 
                 <main className="flex-1">
