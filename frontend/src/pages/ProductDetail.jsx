@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { productData } from '../static/data'
 import Header from '../components/Layout/Header'
@@ -111,6 +111,8 @@ const ProductDetail = () => {
   const [formRating, setFormRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [formText, setFormText] = useState('')
+  
+
 
   if (!product) {
     return (
@@ -165,6 +167,19 @@ const ProductDetail = () => {
     { key: 'reviews', label: `Reviews (${reviews.length})` },
     { key: 'seller', label: 'Seller information' },
   ]
+
+
+  useEffect(() => {
+  setActiveImg(0)
+  setQty(1)
+  setAdded(false)
+  setWishlisted(false)
+  setTab('details')
+  setReviews([
+    { name: 'Ayesha K.', rating: 5, date: '2 days ago', comment: 'Exactly as described and shipping was quick. Really happy with it!' },
+    { name: 'Daniel M.', rating: 4, date: '1 week ago', comment: 'Good quality for the price. Packaging could be a little better.' },
+  ])
+}, [id])
 
   return (
     <div className="bg-white">
