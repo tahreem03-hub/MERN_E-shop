@@ -137,22 +137,40 @@ router.post('/login', catchAsyncError(async (req, res, next) => {
 }))
 
 // load user
-router.get('/getUser',isAuthenticated, catchAsyncError(async(req, res,next)=>{
+router.get('/getUser', isAuthenticated, catchAsyncError(async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id)
         if (!user) {
-        return next(new ErrorHandler("User does not exist", 400));
-      }
+            return next(new ErrorHandler("User does not exist", 400));
+        }
 
-      res.status(200).json({
-        success: true,
-        user,
-      });
+        res.status(200).json({
+            success: true,
+            user,
+        });
     } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+        return next(new ErrorHandler(error.message, 500));
     }
-  })
+})
 );
+
+router.get('/logout', catchAsyncError(async (req, res, next) => {
+    try {
+        console.log("called")
+        res.cookie('token', null, {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "Log out successful",
+        })
+
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}))
 
 
 module.exports = router;
