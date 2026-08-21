@@ -1,6 +1,7 @@
 import { Camera } from 'lucide-react'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 const Profile = () => {
   const { user } = useSelector((state) => state.user)
@@ -22,16 +23,7 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    try {
-      const { data } = axios.get(`${import.meta.env.VITE_URL}/user/logout`, {
-        withCredentials: true,
-      })
-      toast.success(data.message);
-      navigate("/login");
-      window.location.reload(true);
-    } catch (error) {
-      console.log(error.response.data.message);
-    }
+    
 }
 
 return (

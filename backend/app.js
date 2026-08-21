@@ -13,8 +13,11 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use('/uploads', express.static("uploads"))
 
 const user= require('./controller/userController');
+const shop=require('./controller/shopController')
 
-app.use('/user', user)
+app.use('/api/user', user)
+app.use('/api/shop', shop)
+
 
 
 

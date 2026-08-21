@@ -5,14 +5,14 @@ import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
 
-const ActivationPage = () => {
-    const { activation_token } = useParams();
+const SellerActivaetionPage = () => {
+ const { activation_token } = useParams();
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
 
     const activationEmail = async () => {
         try {
-            const { data } = await axios.post(`${import.meta.env.VITE_URL}/user/activation`, { activation_token },
+            const { data } = await axios.post(`${import.meta.env.VITE_URL}/shop/activation`, { activation_token },
                 { headers: { "Content-Type": 'application/json' } }
             )
             setSuccess(true);
@@ -29,13 +29,13 @@ const ActivationPage = () => {
             {error ? (
                 <p className='text-xl text-white font-bold'>{error}</p>
             ) : success ? (
-                <p className='text-xl text-white font-bold'>Your account has been created successfully!</p>
+                <p className='text-xl text-white font-bold'>Your shop has been created successfully!</p>
             ) : (
-                <p className='text-xl text-white font-bold'>Activating your account...</p>
+                <p className='text-xl text-white font-bold'>Activating your shop...</p>
             )}
 
         </div>
     )
 }
 
-export default ActivationPage
+export default SellerActivaetionPage

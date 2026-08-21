@@ -10,7 +10,9 @@ import {
   CreditCard,
 } from "lucide-react";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const ProfileSidebar = () => {
   const navItems = [
@@ -24,8 +26,20 @@ const ProfileSidebar = () => {
     { icon: Lock, title: "Change Password", path: "/profile/change-password" },
   ];
 
-  const handleLogout = () => {
-    // Logout API will be added later
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+
+      const { data } = await axios.get(`${import.meta.env.VITE_URL}/user/logout`, {
+        withCredentials: true,
+      })
+      toast.success(data.message);
+      navigate("/login");
+      window.location.reload(true);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
   };
 
   return (
@@ -37,10 +51,9 @@ const ProfileSidebar = () => {
             key={title}
             className={({ isActive }) =>
               `flex shrink-0 items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200
-              ${
-                isActive
-                  ? "bg-[#f1e8ec] font-medium text-[#2E294E]"
-                  : "text-[#2E294E] hover:bg-[#f1e8ec]"
+              ${isActive
+                ? "bg-[#f1e8ec] font-medium text-[#2E294E]"
+                : "text-[#2E294E] hover:bg-[#f1e8ec]"
               }`
             }
           >

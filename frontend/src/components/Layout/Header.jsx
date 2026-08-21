@@ -11,12 +11,13 @@ import {
   X,
 } from 'lucide-react'
 import { productData } from '../../static/data'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
 import DropDown from './DropDown'
 import { useSelector } from 'react-redux'
 import Cart from '../cart/Cart'
 import Wishlist from '../wishlist/Wishlist'
+
 
 const Header = () => {
   const { isAuthenticated, user } = useSelector((state) => state.user)
@@ -30,6 +31,7 @@ const Header = () => {
   // mobile drawer (UI only – no logic change)
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  const navigate = useNavigate()
   const handleSearchChange = (e) => {
     const term = e.target.value
     setSearchTerm(term)
@@ -121,7 +123,8 @@ const Header = () => {
 
           {/* Become Seller */}
           <div className="ml-auto md:ml-0 shrink-0">
-            <button className="bg-[#2E294E] rounded-full px-4 py-2 text-white text-sm font-medium tracking-wide shadow-sm transition-all duration-200 hover:bg-[#3d3767] hover:shadow-md">
+            <button className="bg-[#2E294E] rounded-full px-4 py-2 text-white text-sm font-medium tracking-wide shadow-sm transition-all duration-200 hover:bg-[#3d3767] hover:shadow-md"
+            onClick={()=>{navigate('/shop-create')}}>
               <span className="hidden sm:inline">Become Seller</span>
               <span className="sm:hidden">Sell</span>
             </button>
@@ -135,7 +138,7 @@ const Header = () => {
       </div>
 
       {/* ===== Nav strip ===== */}
-      <div className="sticky top-0 z-40 bg-[#2E294E] shadow-sm">
+      <div className="sticky top-0 z-10 bg-[#2E294E] shadow-sm">
         <div className="max-w-7xl mx-auto h-16 px-4 md:px-8 flex items-center justify-between">
           {/* categories */}
           <div className="relative">

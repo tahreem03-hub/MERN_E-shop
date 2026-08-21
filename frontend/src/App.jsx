@@ -2,11 +2,11 @@ import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
 import axios from 'axios'
 
 import Store from './redux/Store'
 import { loadUser } from './redux/actions/user'
+
 
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
@@ -15,19 +15,18 @@ import HomePage from './pages/HomePage'
 import BestSelling from './pages/BestSelling'
 import ProductPage from './pages/ProductPage'
 import ProductDetail from './pages/ProductDetail'
-import ProfilePage from './pages/ProfileLayout'
 import ProfileRoutes from '../routes/ProfileRoutes'
+import ShopCreatePage from './pages/ShopCreatePage'
+import ProtectedRoute from '../routes/ProtectedRoute'
+import SellerActivaetionPage from './pages/SellerActivaetionPage'
 
 
 
 const App = () => {
 
-
   useEffect(() => {
     Store.dispatch(loadUser());
   }, [])
-
-
 
   return (
     <>
@@ -36,8 +35,6 @@ const App = () => {
       <Routes>
 
         <Route path='/' element={<HomePage />} />
-
-
         <Route path='/login' element={<LoginPage />} />
         <Route path='/sign-up' element={<SignUpPage />} />
         <Route path='/activation/:activation_token' element={<ActivationPage />} />
@@ -45,8 +42,22 @@ const App = () => {
         <Route path='/products' element={<ProductPage />} />
         <Route path='/products/:id' element={<ProductDetail />} />
 
+        <Route
+          path="/profile/*"
+          element={
+            <ProtectedRoute>
+              <ProfileRoutes />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route path='/profile/*' element={<ProfileRoutes />} />
+
+
+
+
+        <Route path='shop-create' element={<ShopCreatePage />} />
+        <Route path='/seller/activation/:activation_token' element={<SellerActivaetionPage />} />
+
 
       </Routes>
     </>
