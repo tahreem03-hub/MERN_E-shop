@@ -30,7 +30,7 @@ const ShopLogin = () => {
             );
             if(data.success){
                 toast.success(data.message)
-                navigate(`/shop/${data.seller._id}`)
+                navigate('/shop/dashboard')
                 window.location.reload(true);
             }
         } catch (error) {

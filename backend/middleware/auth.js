@@ -35,7 +35,6 @@ exports.isSeller = catchAsyncError(async (req, res, next) => {
         const decoded = await jwt.verify(seller_token, process.env.JWT_SECRET_KEY)
         console.log(decoded)
         req.seller = await Shop.findById(decoded.id)
-console.log("SELLER:", req.seller);
         if (!req.seller) {
             return next(new ErrorHandler("Seller not found", 404));
         }

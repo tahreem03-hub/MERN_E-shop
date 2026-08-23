@@ -168,7 +168,7 @@ router.get('/getSeller', isSeller, catchAsyncError(async (req, res, next) => {
             seller,
         });
     } catch (error) {
-    console.log("ERROR:", error);
+   
     return next(new ErrorHandler(error.message, 500));
 }
 })
