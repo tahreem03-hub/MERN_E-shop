@@ -8,10 +8,10 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const { upload } = require("../multer");
 const sendMail = require("../utils/sendMail");
 const catchAsyncError = require("../middleware/catchAsyncError");
-const sendToken = require("../utils/jwtToken");
 const { json } = require("stream/consumers");
 const { isAuthenticated } = require("../middleware/auth");
 const shop = require("../models/shop");
+const sendSellerToken = require("../utils/sendSellerToken");
 
 
 const activation_Token = async (seller) => {
@@ -119,14 +119,14 @@ router.post('/activation', catchAsyncError(async (req, res, next) => {
         // Save the seller to the database
         //await shop.save();
 
-        sendToken(seller, 201, res, "Account activated successfully");
+        sendSellerToken(seller, 201, res, "Shop activated successfully");
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
     }
 }))
 
 
-router.post('/login-shop', catchAsyncError(async (req, res, next) => {
+router.post('/login', catchAsyncError(async (req, res, next) => {
     try {
         const { email, password } = req.body
 
@@ -146,7 +146,7 @@ router.post('/login-shop', catchAsyncError(async (req, res, next) => {
             return next(new ErrorHandler("Wrong password!! Try again", 400))
         }
 
-        sendToken(seller, 201, res, "Login Successful");
+        sendSellerToken(seller, 201, res, "Login Successful");
 
     } catch (error) {
         console.log(error)

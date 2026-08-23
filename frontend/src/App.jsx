@@ -19,6 +19,7 @@ import ProfileRoutes from '../routes/ProfileRoutes'
 import ShopCreatePage from './pages/ShopCreatePage'
 import ProtectedRoute from '../routes/ProtectedRoute'
 import SellerActivaetionPage from './pages/SellerActivaetionPage'
+import ShopLoginPage from './pages/ShopLoginPage'
 
 
 
@@ -56,6 +57,7 @@ const App = () => {
 
 
         <Route path='shop-create' element={<ShopCreatePage />} />
+        <Route path='shop-login' element={<ShopLoginPage/>}/>
         <Route path='/seller/activation/:activation_token' element={<SellerActivaetionPage />} />
 
 
