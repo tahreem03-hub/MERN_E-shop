@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import axios from 'axios'
 
 import Store from './redux/Store'
-import { loadUser } from './redux/actions/user'
+import { loadSeller, loadUser } from './redux/actions/user'
 
 
 import LoginPage from './pages/LoginPage'
@@ -20,6 +20,8 @@ import ShopCreatePage from './pages/ShopCreatePage'
 import ProtectedRoute from '../routes/ProtectedRoute'
 import SellerActivaetionPage from './pages/SellerActivaetionPage'
 import ShopLoginPage from './pages/ShopLoginPage'
+import SellerProtectedRoute from '../routes/SellerProtectedRoute'
+import ShopHomepage from './pages/shop/ShopHomepage'
 
 
 
@@ -27,6 +29,7 @@ const App = () => {
 
   useEffect(() => {
     Store.dispatch(loadUser());
+    Store.dispatch(loadSeller());
   }, [])
 
   return (
@@ -52,13 +55,15 @@ const App = () => {
           }
         />
 
-
-
-
-
         <Route path='shop-create' element={<ShopCreatePage />} />
-        <Route path='shop-login' element={<ShopLoginPage/>}/>
+        <Route path='shop-login' element={<ShopLoginPage />} />
         <Route path='/seller/activation/:activation_token' element={<SellerActivaetionPage />} />
+        <Route path='/shop/:id'
+          element={
+            <SellerProtectedRoute>
+              <ShopHomepage/>
+            </SellerProtectedRoute>}
+        />
 
 
       </Routes>

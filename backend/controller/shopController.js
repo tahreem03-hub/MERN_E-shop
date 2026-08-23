@@ -9,7 +9,7 @@ const { upload } = require("../multer");
 const sendMail = require("../utils/sendMail");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const { json } = require("stream/consumers");
-const { isAuthenticated } = require("../middleware/auth");
+const { isSeller } = require("../middleware/auth");
 const shop = require("../models/shop");
 const sendSellerToken = require("../utils/sendSellerToken");
 
@@ -156,9 +156,9 @@ router.post('/login', catchAsyncError(async (req, res, next) => {
 }))
 
 // load seller
-router.get('/getSeller', isAuthenticated, catchAsyncError(async (req, res, next) => {
+router.get('/getSeller', isSeller, catchAsyncError(async (req, res, next) => {
     try {
-        const seller = await shop.findById(req.shop.id)
+        const seller = req.seller;
         if (!seller) {
             return next(new ErrorHandler("seller does not exist", 400));
         }
@@ -168,8 +168,9 @@ router.get('/getSeller', isAuthenticated, catchAsyncError(async (req, res, next)
             seller,
         });
     } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
-    }
+    console.log("ERROR:", error);
+    return next(new ErrorHandler(error.message, 500));
+}
 })
 );
 
