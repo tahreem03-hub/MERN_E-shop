@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const ShopLoginPage = () => {
   const {isLoading, isSeller}=useSelector((state)=>state.seller);
 
-  const navigate=useNavigate
+  const navigate=useNavigate()
   useEffect(()=>{
       if(isSeller===true){
         navigate('/shop/dashboard')

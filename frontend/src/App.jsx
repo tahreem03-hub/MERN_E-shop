@@ -22,6 +22,7 @@ import SellerActivaetionPage from './pages/SellerActivaetionPage'
 import ShopLoginPage from './pages/ShopLoginPage'
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ShopHomepage from './pages/shop/ShopHomepage'
+import { ShopDashboardPage } from '../routes/ShopRoutes'
 
 
 
@@ -63,6 +64,13 @@ const App = () => {
             <SellerProtectedRoute>
               <ShopHomepage/>
             </SellerProtectedRoute>}
+        />
+
+        <Route path='/shop/dashboard'
+        element={
+        <SellerProtectedRoute>
+          <ShopDashboardPage/>
+        </SellerProtectedRoute>}
         />
 
 

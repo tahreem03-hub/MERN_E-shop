@@ -278,14 +278,14 @@ export const productData = [
       },
       {
         publicId: "test",
-        url: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp-spacegray-select-202206_GEO_EMEA_LANG_FR?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1654021658445",
+        url: "https://www.mega.pk/items_images/Apple+MacBook+Air+M2+Chip+MLY33+8GB+Ram+256GB+SSD+Midnight+Price+in+Pakistan%2C+Specifications%2C+Features_-_23441.webp",
       },
     ],
     shop: {
       name: "Apple Inc.",
       shopAvatar: {
         publicId: "test",
-        url: "https://www.mega.pk/items_images/Apple+MacBook+Air+M2+Chip+MLY33+8GB+Ram+256GB+SSD+Midnight+Price+in+Pakistan%2C+Specifications%2C+Features_-_23441.webp",
+        url: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp-spacegray-select-202206_GEO_EMEA_LANG_FR?wid=904&hei=840&fmt=jpeg&qlt=90&.v=1654021658445",
       },
       ratings: 4.2,
     },
@@ -308,18 +308,18 @@ export const productData = [
       },
       {
         publicId: "test",
-        url: "https://m.media-amazon.com/images/I/61bK6PMOC3L._AC_SX679_.jpg",
+        url: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
       },
     ],
     shop: {
       name: "Amazon Ltd",
       shopAvatar: {
         publicId: "test",
-        url: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg",
+        url: "https://m.media-amazon.com/images/I/61bK6PMOC3L._AC_SX679_.jpg",
       },
       ratings: 4.2,
     },
-    price:1000,
+    price:1000000000000,
     discountPrice: 1099,
     rating: 5,
     totalSell: 80,

@@ -25,7 +25,7 @@ export const loadSeller = () => async (dispatch) => {
             withCredentials: true,
         });
 
-        dispatch({ type: "LoadSellerSuccess", payload: data.user })
+        dispatch({ type: "LoadSellerSuccess", payload: data.seller })
     } catch (error) {
         dispatch({
             type: "LoadSellerFail",
