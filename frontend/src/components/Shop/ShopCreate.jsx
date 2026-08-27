@@ -29,8 +29,6 @@ const ShopCreate = () => {
       return;
     }
 
-    console.log(avatar);
-
     const formData = new FormData();
 
     formData.append("file", avatar);

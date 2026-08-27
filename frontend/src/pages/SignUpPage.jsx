@@ -8,8 +8,6 @@ const SignUpPage = () => {
   const { isAuthenticated } = useSelector((state) => state.user)
   const navigate = useNavigate();
 
-  console.log(isAuthenticated)
-
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/')

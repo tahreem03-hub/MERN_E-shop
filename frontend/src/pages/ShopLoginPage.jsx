@@ -9,7 +9,7 @@ const ShopLoginPage = () => {
   const navigate=useNavigate()
   useEffect(()=>{
       if(isSeller===true){
-        navigate('/shop/dashboard')
+        navigate('/dashboard')
       }
     },[isLoading, isSeller])
     return (

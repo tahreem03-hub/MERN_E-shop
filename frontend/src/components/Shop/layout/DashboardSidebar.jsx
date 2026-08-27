@@ -15,7 +15,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, to: '/shop/dashboard' },
+  { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
   { label: 'All Orders', icon: Package, to: '/dashboard/orders' },
   { label: 'All Products', icon: ShoppingBag, to: '/dashboard/products' },
   { label: 'Create Product', icon: FolderPlus, to: '/dashboard/create-product' },

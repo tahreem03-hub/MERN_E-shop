@@ -23,6 +23,7 @@ import ShopLoginPage from './pages/ShopLoginPage'
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ShopHomepage from './pages/shop/ShopHomepage'
 import { ShopDashboardPage } from '../routes/ShopRoutes'
+import ShopCreateProduct from './pages/shop/ShopCreateProduct'
 
 
 
@@ -59,19 +60,23 @@ const App = () => {
         <Route path='shop-create' element={<ShopCreatePage />} />
         <Route path='shop-login' element={<ShopLoginPage />} />
         <Route path='/seller/activation/:activation_token' element={<SellerActivaetionPage />} />
-        <Route path='/shop/:id'
+        <Route path='/shop/:id' element={<ShopHomepage />} />
+
+        <Route path='/dashboard'
           element={
             <SellerProtectedRoute>
-              <ShopHomepage/>
+              <ShopDashboardPage />
             </SellerProtectedRoute>}
         />
 
-        <Route path='/shop/dashboard'
-        element={
-        <SellerProtectedRoute>
-          <ShopDashboardPage/>
-        </SellerProtectedRoute>}
-        />
+        <Route
+  path='/dashboard/create-product'
+  element={
+    <SellerProtectedRoute>
+      <ShopCreateProduct />
+    </SellerProtectedRoute>
+  }
+/>
 
 
       </Routes>

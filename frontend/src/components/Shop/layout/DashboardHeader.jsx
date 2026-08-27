@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom'
 
 const DashboardHeader = () => {
     const { seller } = useSelector((state) => state.seller)
-    console.log(seller)
-    console.log(`${import.meta.env.VITE_URL}/uploads/${seller.avatar}`)
     return (
         <div className='flex justify-between py-2 bg-white px-6'>
             <Link to="/" className="shrink-0">
@@ -26,11 +24,14 @@ const DashboardHeader = () => {
                 <Link to='/dashboard/messages'><MessageCircleCheck className='text-[#2E294E]' strokeWidth={1.6} /></Link>
 
                 <div>
+                    <Link to={`/shop/${seller._id}`}>
                     <img
                         src={`${import.meta.env.VITE_URL}/uploads/${seller?.avatar}`}
                         alt=""
                         className="w-7 h-7 rounded-full object-cover ring-2 ring-[#dfb3c7]/60"
                     />
+                    </Link>
+                    
                 </div>
             </div>
         </div>

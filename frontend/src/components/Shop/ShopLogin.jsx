@@ -30,7 +30,7 @@ const ShopLogin = () => {
             );
             if(data.success){
                 toast.success(data.message)
-                navigate('/shop/dashboard')
+                navigate('/dashboard')
                 window.location.reload(true);
             }
         } catch (error) {
