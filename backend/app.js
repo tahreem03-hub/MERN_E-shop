@@ -2,7 +2,7 @@ const express = require("express");
 const ErrorHandler = require("./middleware/error");
 const app = express();
 const cookieParser = require("cookie-parser");
-const cors=require('cors')
+const cors = require('cors')
 
 
 // middleware
@@ -12,11 +12,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use('/api/uploads', express.static("uploads"))
 
-const user= require('./controller/userController');
-const shop=require('./controller/shopController')
+const user = require('./controller/userController');
+const shop = require('./controller/shopController')
+const product = require('./controller/productController')
 
 app.use('/api/user', user)
 app.use('/api/shop', shop)
+app.use('/api/product', product)
+
 
 
 

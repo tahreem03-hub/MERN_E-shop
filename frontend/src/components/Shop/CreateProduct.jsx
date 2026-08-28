@@ -1,6 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { createProduct } from '../../redux/actions/product'
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast'
 
 const CreateProduct = () => {
+
+  const { seller } = useSelector((state) => state.seller);
+  const { success, error } = useSelector((state) => state.product);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+
   const [images, setImages] = useState([])
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -20,10 +31,32 @@ const CreateProduct = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // TODO: build FormData + dispatch your own createProduct action here
-    // once the backend (Product model/controller) and Redux action exist.
-    console.log({ name, description, category, tags, originalPrice, discountPrice, stock, images })
+    const newForm = new FormData();
+    images.forEach((image) =>
+      newForm.append("images", image));
+
+    newForm.append("name", name);
+    newForm.append("description", description);
+    newForm.append("category", category);
+    newForm.append("tags", tags);
+    newForm.append("originalPrice", originalPrice);
+    newForm.append("discountPrice", discountPrice);
+    newForm.append("stock", stock);
+    newForm.append("shopId", seller._id);
+
+    dispatch(createProduct(newForm));
   }
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+    if (success) {
+      toast.success("Product created successfully!");
+      navigate("/dashboard");
+      window.location.reload();
+    }
+  }, [dispatch, error, success]);
 
   return (
     <div className='w-[90%] md:w-[50%] bg-white shadow-sm h-[80vh] rounded-[4px] p-3 overflow-y-scroll'>
