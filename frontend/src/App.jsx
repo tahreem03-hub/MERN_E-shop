@@ -24,6 +24,7 @@ import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ShopHomepage from './pages/shop/ShopHomepage'
 import { ShopDashboardPage } from '../routes/ShopRoutes'
 import ShopCreateProduct from './pages/shop/ShopCreateProduct'
+import ShopAllProducts from './pages/shop/ShopAllProducts'
 
 
 
@@ -70,13 +71,22 @@ const App = () => {
         />
 
         <Route
-  path='/dashboard/create-product'
-  element={
-    <SellerProtectedRoute>
-      <ShopCreateProduct />
-    </SellerProtectedRoute>
-  }
-/>
+          path='/dashboard/create-product'
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
+        />
+
+         <Route
+          path='/dashboard/products'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllProducts />
+            </SellerProtectedRoute>
+          }
+        />
 
 
       </Routes>
