@@ -22,7 +22,7 @@ import SellerActivaetionPage from './pages/SellerActivaetionPage'
 
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ProfileRoutes from '../routes/ProfileRoutes'
-import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent } from '../routes/ShopRoutes'
+import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons } from '../routes/ShopRoutes'
 
 
 
@@ -78,7 +78,7 @@ const App = () => {
           }
         />
 
-         <Route
+        <Route
           path='/dashboard/products'
           element={
             <SellerProtectedRoute>
@@ -97,13 +97,22 @@ const App = () => {
           }
         />
 
-         <Route
+        <Route
           path='/dashboard/events'
           element={
             <SellerProtectedRoute>
               <ShopAllEvents />
             </SellerProtectedRoute>
           }
+        />
+
+
+        <Route
+          path='/dashboard/coupons'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllCoupons />
+            </SellerProtectedRoute>}
         />
 
 

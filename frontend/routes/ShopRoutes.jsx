@@ -6,6 +6,7 @@ import ShopHomepage from '../src/pages/shop/ShopHomepage'
 import ShopLoginPage from '../src/pages/ShopLoginPage'
 import ShopAllEvents from '../src/pages/shop/ShopAllEvents'
 import ShopCreateEvent from '../src/pages/shop/ShopCreateEvent'
+import ShopAllCoupons from '../src/pages/shop/ShopAllCoupons'
 
 export {
     ShopDashboardPage,
@@ -15,5 +16,7 @@ export {
     ShopLoginPage,
     ShopAllEvents,
     ShopCreateEvent,
+    ShopAllCoupons,
+    
 
 }
