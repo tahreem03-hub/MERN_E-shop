@@ -1,14 +1,28 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 const ShopInfo = () => {
   const { isLoading, seller } = useSelector((state) => state.seller)
-
+  const navigate = useNavigate();
   if (isLoading || !seller) return null
 
+  const handleLogout = async () => {
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_URL}/shop/logout`, {
+        withCredentials: true,
+      })
+      toast.success(data.message);
+      navigate("/shop-login");
+      window.location.reload(true);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
   return (
-    <div>
+    <div className='px-3'>
       <div className='w-full py-5'>
         <div className='w-full flex items-center justify-center'>
           <img
@@ -64,6 +78,13 @@ const ShopInfo = () => {
             <span className='text-white font-[600]'>Go to Dashboard</span>
           </div>
         </Link>
+      </div>
+
+      <div className='px-4'>
+        <div className='w-full h-[42px] rounded-[5px] bg-[#B5316B] flex items-center justify-center cursor-pointer'>
+          <button className='text-white font-[600]'
+            onClick={handleLogout}>Logout</button>
+        </div>
       </div>
     </div>
   )

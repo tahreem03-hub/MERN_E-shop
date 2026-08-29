@@ -16,7 +16,6 @@ const productSchema = new schema({
     },
     tags: {
         type: String,
-        required: [true, "Please enter your product tags!"],
     },
     originalPrice: {
         type: Number,
@@ -48,7 +47,7 @@ const productSchema = new schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
     }
 })
 

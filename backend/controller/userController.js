@@ -156,7 +156,6 @@ router.get('/getUser', isAuthenticated, catchAsyncError(async (req, res, next) =
 
 router.get('/logout', catchAsyncError(async (req, res, next) => {
     try {
-        console.log("called")
         res.cookie('token', null, {
             expires: new Date(Date.now()),
             httpOnly: true,
