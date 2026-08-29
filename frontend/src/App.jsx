@@ -15,16 +15,15 @@ import HomePage from './pages/HomePage'
 import BestSelling from './pages/BestSelling'
 import ProductPage from './pages/ProductPage'
 import ProductDetail from './pages/ProductDetail'
-import ProfileRoutes from '../routes/ProfileRoutes'
 import ShopCreatePage from './pages/ShopCreatePage'
 import ProtectedRoute from '../routes/ProtectedRoute'
 import SellerActivaetionPage from './pages/SellerActivaetionPage'
-import ShopLoginPage from './pages/ShopLoginPage'
+
+
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
-import ShopHomepage from './pages/shop/ShopHomepage'
-import { ShopDashboardPage } from '../routes/ShopRoutes'
-import ShopCreateProduct from './pages/shop/ShopCreateProduct'
-import ShopAllProducts from './pages/shop/ShopAllProducts'
+import ProfileRoutes from '../routes/ProfileRoutes'
+import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent } from '../routes/ShopRoutes'
+
 
 
 
@@ -84,6 +83,25 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopAllProducts />
+            </SellerProtectedRoute>
+          }
+        />
+
+
+        <Route
+          path='/dashboard/create-event'
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateEvent />
+            </SellerProtectedRoute>
+          }
+        />
+
+         <Route
+          path='/dashboard/events'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllEvents />
             </SellerProtectedRoute>
           }
         />
