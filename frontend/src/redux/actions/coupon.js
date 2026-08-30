@@ -7,7 +7,7 @@ export const createCoupon = (couponData) => async (dispatch) => {
     const { data } = await axios.post(
       `${import.meta.env.VITE_URL}/coupon/create-coupon-code`,
       couponData,
-      { withCredentials: true } // needed — route uses isSeller
+      { withCredentials: true }
     );
 
     dispatch({
@@ -17,7 +17,7 @@ export const createCoupon = (couponData) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: "couponCreateFailed",
-      payload: error.response.data.message,
+      payload: error.response?.data?.message || error.message, // Fix: Added fallback
     });
   }
 };
@@ -26,16 +26,19 @@ export const getAllCoupons = (id) => async (dispatch) => {
   try {
     dispatch({ type: "getAllCouponsRequest" });
 
-    const { data } = await axios.get(`${import.meta.env.VITE_URL}/coupon/get-coupon/${id}`);
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_URL}/coupon/get-coupon/${id}`,
+      { withCredentials: true } // Fix: Added withCredentials for consistency
+    );
 
     dispatch({
       type: "getAllCouponsSuccess",
-      payload: data.couponCodes,
+      payload: data.couponCodes || [], // Fix: Added fallback empty array
     });
   } catch (error) {
     dispatch({
       type: "getAllCouponsFailed",
-      payload: error.response.data.message,
+      payload: error.response?.data?.message || error.message, // Fix: Added fallback
     });
   }
 };
@@ -56,7 +59,7 @@ export const deleteCoupon = (id) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: "deleteCouponFailed",
-      payload: error.response.data.message,
+      payload: error.response?.data?.message || error.message, // Fix: Added fallback
     });
   }
 };

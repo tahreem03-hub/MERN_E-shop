@@ -15,6 +15,10 @@ const AllCoupons = () => {
   const [minAmount, setMinAmount] = useState(null)
   const [maxAmount, setMaxAmount] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState('')
+  const [appliesTo, setAppliesTo] = useState('entireOrder')
+  const [category, setCategory] = useState('')
+  const [expiryDate, setExpiryDate] = useState('')
+  const [usageLimit, setUsageLimit] = useState('')
 
   const { products } = useSelector((state) => state.product)
 
@@ -29,19 +33,40 @@ const AllCoupons = () => {
     if (success) {
       toast.success('Coupon code created successfully!')
       setOpen(false)
-      window.location.reload()
+      // Reset form
+      setName('')
+      setValue(null)
+      setMinAmount(null)
+      setMaxAmount(null)
+      setSelectedProduct('')
+      setAppliesTo('entireOrder')
+      setCategory('')
+      setExpiryDate('')
+      setUsageLimit('')
+      dispatch(getAllCoupons(seller._id)) // Refresh instead of reload
     }
-  }, [error, success])
+  }, [error, success, dispatch, seller?._id])
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    
+    // Validate required fields
+    if (!name || !value || !expiryDate) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
     dispatch(
       createCoupon({
         name,
-        value,
-        minAmount,
-        maxAmount,
-        selectedProduct,
+        value: Number(value),
+        minAmount: minAmount ? Number(minAmount) : undefined,
+        maxAmount: maxAmount ? Number(maxAmount) : undefined,
+        selectedProduct: appliesTo === 'specificProduct' ? selectedProduct : undefined,
+        appliesTo,
+        category: appliesTo === 'category' ? category : undefined,
+        expiryDate: new Date(expiryDate).toISOString(),
+        usageLimit: usageLimit ? Number(usageLimit) : undefined,
         shop: seller,
       })
     )
@@ -49,7 +74,10 @@ const AllCoupons = () => {
 
   const handleDelete = (id) => {
     dispatch(deleteCoupon(id))
-    window.location.reload()
+    // Refresh the list after deletion
+    setTimeout(() => {
+      dispatch(getAllCoupons(seller._id))
+    }, 300)
   }
 
   return (
@@ -80,6 +108,8 @@ const AllCoupons = () => {
               <tr className='border-b border-[#f2e4ea] text-xs uppercase tracking-wide text-[#2E294E]/60'>
                 <th className='py-3 px-2'>Name</th>
                 <th className='py-3 px-2'>Discount %</th>
+                <th className='py-3 px-2'>Expiry Date</th>
+                <th className='py-3 px-2'>Usage</th>
                 <th className='py-3 px-2'>Delete</th>
               </tr>
             </thead>
@@ -88,6 +118,12 @@ const AllCoupons = () => {
                 <tr key={coupon._id} className='border-b border-[#f2e4ea] text-sm text-[#2E294E]'>
                   <td className='py-3 px-2'>{coupon.name}</td>
                   <td className='py-3 px-2'>{coupon.value}%</td>
+                  <td className='py-3 px-2'>
+                    {coupon.expiryDate ? new Date(coupon.expiryDate).toLocaleDateString() : 'N/A'}
+                  </td>
+                  <td className='py-3 px-2'>
+                    {coupon.usageLimit ? `${coupon.usageCount}/${coupon.usageLimit}` : `${coupon.usageCount}/∞`}
+                  </td>
                   <td className='py-3 px-2'>
                     <button onClick={() => handleDelete(coupon._id)}>
                       <Trash2 className='h-4 w-4 text-[#2E294E]/60 hover:text-[#B5316B]' />
@@ -102,16 +138,19 @@ const AllCoupons = () => {
 
       {open && (
         <div className='fixed top-0 left-0 w-full h-screen bg-black/60 z-[2000] flex items-center justify-center'>
-          <div className='w-[90%] md:w-[50%] h-[80vh] bg-white rounded-[4px] shadow-sm relative overflow-y-scroll p-4'>
-            <button onClick={() => setOpen(false)} className='absolute top-3 right-3 cursor-pointer'>
+          <div className='w-[90%] md:w-[50%] max-h-[90vh] bg-white rounded-[4px] shadow-sm relative overflow-y-scroll p-4'>
+            <button 
+              onClick={() => setOpen(false)} 
+              className='absolute top-3 right-3 cursor-pointer z-10'
+            >
               <X size={30} className='text-[#2E294E]' />
             </button>
 
             <h5 className='text-[30px] font-Poppins text-center text-[#2E294E]'>Create Coupon Code</h5>
-            <form onSubmit={handleSubmit}>
-              <br />
+            <form onSubmit={handleSubmit} className='mt-4'>
+              {/* Coupon Name */}
               <div>
-                <label className='pb-2'>
+                <label className='pb-2 block'>
                   Name <span className='text-[#B5316B]'>*</span>
                 </label>
                 <input
@@ -125,66 +164,146 @@ const AllCoupons = () => {
               </div>
 
               <br />
+              
+              {/* Discount Percentage */}
               <div>
-                <label className='pb-2'>
+                <label className='pb-2 block'>
                   Discount Percentage <span className='text-[#B5316B]'>*</span>
                 </label>
                 <input
                   type='number'
-                  value={value}
+                  value={value || ''}
                   onChange={(e) => setValue(e.target.value)}
                   required
-                  placeholder='Enter discount percentage'
+                  min='1'
+                  max='100'
+                  placeholder='Enter discount percentage (1-100)'
                   className='appearance-none block w-full px-3 h-[35px] border border-[#f2e4ea] rounded-[3px] focus:outline-none focus:ring-[#B5316B] focus:border-[#B5316B] sm:text-sm sm:leading-5'
                 />
               </div>
 
               <br />
+              
+              {/* Minimum Amount */}
               <div>
-                <label className='pb-2'>Minimum Amount</label>
+                <label className='pb-2 block'>Minimum Amount (optional)</label>
                 <input
                   type='number'
-                  value={minAmount}
+                  value={minAmount || ''}
                   onChange={(e) => setMinAmount(e.target.value)}
+                  min='0'
                   placeholder='Enter minimum order amount'
                   className='appearance-none block w-full px-3 h-[35px] border border-[#f2e4ea] rounded-[3px] focus:outline-none focus:ring-[#B5316B] focus:border-[#B5316B] sm:text-sm sm:leading-5'
                 />
               </div>
 
               <br />
+              
+              {/* Maximum Amount */}
               <div>
-                <label className='pb-2'>Maximum Amount</label>
+                <label className='pb-2 block'>Maximum Amount (optional)</label>
                 <input
                   type='number'
-                  value={maxAmount}
+                  value={maxAmount || ''}
                   onChange={(e) => setMaxAmount(e.target.value)}
+                  min='0'
                   placeholder='Enter maximum order amount'
                   className='appearance-none block w-full px-3 h-[35px] border border-[#f2e4ea] rounded-[3px] focus:outline-none focus:ring-[#B5316B] focus:border-[#B5316B] sm:text-sm sm:leading-5'
                 />
               </div>
 
               <br />
+              
+              {/* Applies To */}
               <div>
-                <label className='pb-2'>Selected Product</label>
+                <label className='pb-2 block'>Applies To</label>
                 <select
-                  className='w-full mt-2 border h-[35px] rounded-[5px] border-[#f2e4ea]'
-                  value={selectedProduct}
-                  onChange={(e) => setSelectedProduct(e.target.value)}
+                  className='w-full mt-2 border h-[35px] rounded-[5px] border-[#f2e4ea] px-3'
+                  value={appliesTo}
+                  onChange={(e) => setAppliesTo(e.target.value)}
                 >
-                  <option value=''>Choose a selected product</option>
-                  {products?.map((p) => (
-                    <option value={p._id} key={p._id}>
-                      {p.name}
-                    </option>
-                  ))}
+                  <option value='entireOrder'>Entire Order</option>
+                  <option value='category'>A Category</option>
+                  <option value='specificProduct'>A Specific Product</option>
                 </select>
               </div>
 
+              {/* Category (conditional) */}
+              {appliesTo === 'category' && (
+                <>
+                  <br />
+                  <div>
+                    <label className='pb-2 block'>Category Name</label>
+                    <input
+                      type='text'
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder='e.g. Gift, Electronics'
+                      className='appearance-none block w-full px-3 h-[35px] border border-[#f2e4ea] rounded-[3px] focus:outline-none focus:ring-[#B5316B] focus:border-[#B5316B] sm:text-sm sm:leading-5'
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Selected Product (conditional) */}
+              {appliesTo === 'specificProduct' && (
+                <>
+                  <br />
+                  <div>
+                    <label className='pb-2 block'>Select Product</label>
+                    <select
+                      className='w-full mt-2 border h-[35px] rounded-[5px] border-[#f2e4ea] px-3'
+                      value={selectedProduct}
+                      onChange={(e) => setSelectedProduct(e.target.value)}
+                    >
+                      <option value=''>Choose a product</option>
+                      {products?.map((p) => (
+                        <option value={p._id} key={p._id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
               <br />
+              
+              {/* Expiry Date */}
+              <div>
+                <label className='pb-2 block'>
+                  Expiry Date <span className='text-[#B5316B]'>*</span>
+                </label>
+                <input
+                  type='date'
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  required
+                  className='appearance-none block w-full px-3 h-[35px] border border-[#f2e4ea] rounded-[3px] focus:outline-none focus:ring-[#B5316B] focus:border-[#B5316B] sm:text-sm sm:leading-5'
+                />
+              </div>
+
+              <br />
+              
+              {/* Usage Limit */}
+              <div>
+                <label className='pb-2 block'>Usage Limit (leave blank for unlimited)</label>
+                <input
+                  type='number'
+                  value={usageLimit || ''}
+                  onChange={(e) => setUsageLimit(e.target.value)}
+                  min='1'
+                  placeholder='e.g. 100'
+                  className='appearance-none block w-full px-3 h-[35px] border border-[#f2e4ea] rounded-[3px] focus:outline-none focus:ring-[#B5316B] focus:border-[#B5316B] sm:text-sm sm:leading-5'
+                />
+              </div>
+
+              <br />
+              
               <input
                 type='submit'
                 value='Create'
-                className='w-full h-[42px] rounded-[5px] bg-[#B5316B] text-white font-[600] cursor-pointer'
+                className='w-full h-[42px] rounded-[5px] bg-[#B5316B] text-white font-[600] cursor-pointer hover:bg-[#9e2a5a] transition-colors'
               />
             </form>
           </div>

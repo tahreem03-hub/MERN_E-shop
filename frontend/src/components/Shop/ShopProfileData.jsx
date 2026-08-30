@@ -5,6 +5,7 @@ import { getAllShopProducts } from '../../redux/actions/product'
 import { getAllEventsShop } from '../../redux/actions/event'
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import ProductCard from '../route/ProductCard'
 
 const ShopProfileData = () => {
   const [active, setActive] = useState(1)
@@ -54,21 +55,7 @@ const ShopProfileData = () => {
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 p-5'>
             {products.map((product) => (
-              <Link
-                to={`/product/${product._id}`}
-                key={product._id}
-                className='bg-white rounded-[4px] shadow-sm overflow-hidden border border-[#f2e4ea]'
-              >
-                <img
-                  src={`${import.meta.env.VITE_URL}/uploads/${product.images?.[0]}`}
-                  alt={product.name}
-                  className='w-full h-[150px] object-cover'
-                />
-                <div className='p-3'>
-                  <h4 className='text-sm font-medium text-[#2E294E] line-clamp-1'>{product.name}</h4>
-                  <p className='text-sm text-[#B5316B] font-[600]'>US$ {product.discountPrice}</p>
-                </div>
-              </Link>
+              <ProductCard data={product} key={product._id}/>
             ))}
           </div>
         )
@@ -82,21 +69,7 @@ const ShopProfileData = () => {
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 p-5'>
             {events.map((event) => (
-              <Link
-                to={`/product/${event._id}`}
-                key={event._id}
-                className='bg-white rounded-[4px] shadow-sm overflow-hidden border border-[#f2e4ea]'
-              >
-                <img
-                  src={`${import.meta.env.VITE_URL}/uploads/${event.images?.[0]}`}
-                  alt={event.name}
-                  className='w-full h-[150px] object-cover'
-                />
-                <div className='p-3'>
-                  <h4 className='text-sm font-medium text-[#2E294E] line-clamp-1'>{event.name}</h4>
-                  <p className='text-sm text-[#B5316B] font-[600]'>US$ {event.discountPrice}</p>
-                </div>
-              </Link>
+              <ProductCard data={event} key={event._id} isEvent={true}/>
             ))}
           </div>
         )

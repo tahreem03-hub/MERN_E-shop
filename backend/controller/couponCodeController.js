@@ -6,26 +6,28 @@ const { isSeller } = require("../middleware/auth");
 
 const router = express.Router();
 
-/*
-"shop._id": req.params.id — this searches inside the 
-embedded shop object for its _id field, since shop here 
-is the whole object, not a plain string like shopId on your
- other models. Different shape needs a different query.
- */
-
- 
-// create coupon code
+// Create coupon code
 router.post(
   "/create-coupon-code",
   isSeller,
   catchAsyncError(async (req, res, next) => {
-    const isCouponCodeExists = await CouponCode.find({ name: req.body.name });
+    // Fix: Check if coupon exists for this specific shop
+    const existingCoupon = await CouponCode.findOne({ 
+      name: req.body.name,
+      "shop._id": req.seller._id
+    });
 
-    if (isCouponCodeExists.length !== 0) {
-      return next(new ErrorHandler("Coupon code already exists!", 400));
+    if (existingCoupon) {
+      return next(new ErrorHandler("Coupon code already exists for your shop!", 400));
     }
 
-    const couponCode = await CouponCode.create(req.body);
+    // Fix: Use req.seller instead of req.body.shop to ensure proper data
+    const couponData = {
+      ...req.body,
+      shop: req.seller
+    };
+
+    const couponCode = await CouponCode.create(couponData);
 
     res.status(201).json({
       success: true,
@@ -34,7 +36,7 @@ router.post(
   })
 );
 
-// get all coupons of a shop
+// Get all coupons of a shop
 router.get(
   "/get-coupon/:id",
   catchAsyncError(async (req, res, next) => {
@@ -47,7 +49,7 @@ router.get(
   })
 );
 
-// delete coupon code
+// Delete coupon code
 router.delete(
   "/delete-coupon-code/:id",
   isSeller,
@@ -58,7 +60,7 @@ router.delete(
       return next(new ErrorHandler("Coupon code not found", 404));
     }
 
-    // ownership check — same pattern as event delete
+    // Fix: Proper ownership check
     if (couponCode.shop._id.toString() !== req.seller._id.toString()) {
       return next(
         new ErrorHandler("You are not the owner of this coupon", 403)
