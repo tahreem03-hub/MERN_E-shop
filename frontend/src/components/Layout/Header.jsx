@@ -20,6 +20,8 @@ import Wishlist from '../wishlist/Wishlist'
 
 
 const Header = () => {
+  const navigate = useNavigate()
+  
   const { isAuthenticated, user } = useSelector((state) => state.user)
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -31,15 +33,14 @@ const Header = () => {
   // mobile drawer (UI only – no logic change)
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const navigate = useNavigate()
+  const { allProducts } = useSelector((state) => state.product)
+
   const handleSearchChange = (e) => {
     const term = e.target.value
     setSearchTerm(term)
-    const filteredProducts =
-      productData &&
-      productData.filter((product) =>
-        product.name.toLowerCase().includes(term.toLowerCase())
-      )
+    const filteredProducts = allProducts && term
+      ? allProducts.filter((product) => product.name.toLowerCase().includes(term.toLowerCase()))
+      : null
     setSearchData(filteredProducts)
   }
 
@@ -50,9 +51,8 @@ const Header = () => {
   // Reusable search field (used in top bar + mobile drawer)
   const SearchField = ({ inDrawer = false }) => (
     <div
-      className={`relative flex items-center justify-between rounded-full border border-gray-300/50 bg-[#f1e8ec] pl-5 pr-1 py-1.5 transition-shadow duration-300 focus-within:ring-2 focus-within:ring-[#2E294E]/10 ${
-        inDrawer ? 'w-full' : 'w-full max-w-md'
-      }`}
+      className={`relative flex items-center justify-between rounded-full border border-gray-300/50 bg-[#f1e8ec] pl-5 pr-1 py-1.5 transition-shadow duration-300 focus-within:ring-2 focus-within:ring-[#2E294E]/10 ${inDrawer ? 'w-full' : 'w-full max-w-md'
+        }`}
     >
       <input
         type="text"
@@ -69,17 +69,15 @@ const Header = () => {
       {searchData && searchData.length > 0 ? (
         <div className="absolute top-[115%] left-0 right-0 bg-white shadow-xl shadow-[#2E294E]/5 border border-gray-100 max-h-[60vh] overflow-y-auto rounded-2xl z-30 p-1.5 animate-[fd_0.22s_ease-out]">
           {searchData.map((i, index) => (
-            <Link to="/pro" key={index} onClick={() => setMobileOpen(false)}>
+            <Link to={`/product/${i._id}`} key={index} onClick={() => setMobileOpen(false)}>
               <div className="flex items-center gap-3 hover:bg-[#f1e8ec] p-2 rounded-xl transition-colors">
                 <img
-                  src={`${i.imageUrl[0].url}`}
+                  src={`${import.meta.env.VITE_URL}/uploads/${i.images?.[0]}`}
                   alt=""
                   className="rounded-lg w-10 h-10 object-cover bg-[#f1e8ec]"
                 />
                 <div className="min-w-0">
-                  <h3 className="text-sm font-medium text-[#2E294E] truncate">
-                    {i.name}
-                  </h3>
+                  <h3 className="text-sm font-medium text-[#2E294E] truncate">{i.name}</h3>
                   <p className="text-xs text-[#d8a6be]">{i.category}</p>
                 </div>
               </div>
@@ -124,7 +122,7 @@ const Header = () => {
           {/* Become Seller */}
           <div className="ml-auto md:ml-0 shrink-0">
             <button className="bg-[#2E294E] rounded-full px-4 py-2 text-white text-sm font-medium tracking-wide shadow-sm transition-all duration-200 hover:bg-[#3d3767] hover:shadow-md"
-            onClick={()=>{navigate('/shop-create')}}>
+              onClick={() => { navigate('/shop-create') }}>
               <span className="hidden sm:inline">Become Seller</span>
               <span className="sm:hidden">Sell</span>
             </button>
@@ -143,9 +141,8 @@ const Header = () => {
           {/* categories */}
           <div className="relative">
             <div
-              className={`flex items-center bg-[#f1e8ec] px-4 md:px-6 py-1.5 cursor-pointer select-none transition-colors hover:bg-[#e6dae0] ${
-                active ? 'rounded-t-2xl' : 'rounded-2xl'
-              }`}
+              className={`flex items-center bg-[#f1e8ec] px-4 md:px-6 py-1.5 cursor-pointer select-none transition-colors hover:bg-[#e6dae0] ${active ? 'rounded-t-2xl' : 'rounded-2xl'
+                }`}
               onClick={handleClick}
             >
               <ListFilter className="w-4 text-[#d8a6be]" strokeWidth={3} />
@@ -158,7 +155,7 @@ const Header = () => {
                 <ChevronDown className="w-5 transition-transform" />
               )}
             </div>
-            {active && <DropDown setActive={setActive}/>}
+            {active && <DropDown setActive={setActive} />}
           </div>
 
           {/* nav (desktop) */}

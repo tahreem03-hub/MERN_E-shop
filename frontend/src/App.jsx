@@ -23,6 +23,7 @@ import SellerActivaetionPage from './pages/SellerActivaetionPage'
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ProfileRoutes from '../routes/ProfileRoutes'
 import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons } from '../routes/ShopRoutes'
+import { getAllProducts } from './redux/actions/product'
 
 
 
@@ -32,6 +33,7 @@ const App = () => {
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
+    Store.dispatch(getAllProducts());
   }, [])
 
   return (
@@ -46,7 +48,7 @@ const App = () => {
         <Route path='/activation/:activation_token' element={<ActivationPage />} />
         <Route path='/best-selling' element={<BestSelling />} />
         <Route path='/products' element={<ProductPage />} />
-        <Route path='/products/:id' element={<ProductDetail />} />
+        <Route path='/product/:id' element={<ProductDetail />} />
 
         <Route
           path="/profile/*"

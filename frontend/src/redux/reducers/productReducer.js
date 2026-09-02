@@ -3,7 +3,7 @@ import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
     isLoading: true,
     success: false,
-    products:[],
+    products: [],
 }
 
 export const productReducer = createReducer(initialState, (builder) => {
@@ -36,7 +36,7 @@ export const productReducer = createReducer(initialState, (builder) => {
         })
 
 
-         .addCase("deleteProductRequest", (state) => {
+        .addCase("deleteProductRequest", (state) => {
             state.isLoading = true;
         })
         .addCase("deleteProductSuccess", (state, action) => {
@@ -48,6 +48,19 @@ export const productReducer = createReducer(initialState, (builder) => {
             state.error = action.payload;
         })
 
+        // get all products for home page
+
+        .addCase("getAllProductsRequest", (state) => {
+            state.isLoading = true;
+        })
+        .addCase("getAllProductsSuccess", (state, action) => {
+            state.isLoading = false;
+            state.allProducts = action.payload;
+        })
+        .addCase("getAllProductsFailed", (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        })
 
         .addCase("ClearErrors", (state) => {
             state.error = null;

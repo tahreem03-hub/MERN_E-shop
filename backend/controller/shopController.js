@@ -168,9 +168,9 @@ router.get('/getSeller', isSeller, catchAsyncError(async (req, res, next) => {
             seller,
         });
     } catch (error) {
-   
-    return next(new ErrorHandler(error.message, 500));
-}
+
+        return next(new ErrorHandler(error.message, 500));
+    }
 })
 );
 
@@ -192,5 +192,19 @@ router.get('/logout', catchAsyncError(async (req, res, next) => {
         return next(new ErrorHandler(error.message, 500));
     }
 }))
+
+router.get(
+    "/get-shop-info/:id",
+    catchAsyncError(async (req, res, next) => {
+        try {
+            const Shop = await shop.findById(req.params.id);
+            if (!Shop) return next(new ErrorHandler("Shop not found", 404));
+            res.status(200).json({ success: true, Shop });
+        } catch (error) {
+            console.log(error)
+            return next(new ErrorHandler(error.message, 500));
+        }
+    })
+);
 
 module.exports = router
