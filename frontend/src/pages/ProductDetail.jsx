@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { addToCart } from '../redux/actions/cart'
+import { addToWishlist, removeFromWishlist } from '../redux/actions/wishlist'
+import { toast } from 'react-hot-toast'
 import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
+import Loader from '../components/Layout/Loader'
 
 const formatPrice = (n) =>
   new Intl.NumberFormat('en-US', {
@@ -14,7 +18,7 @@ const formatPrice = (n) =>
 const initials = (name = '') =>
   name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
 
-/* -------------------- inline icons (no dependency) -------------------- */
+/* inline icons */
 const Star = ({ fill = 'full' }) => (
   <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true">
     <path d="M10 1.6l2.47 5 5.53.8-4 3.9.94 5.5L10 14.2 5.06 16.8 6 11.3l-4-3.9 5.53-.8z" fill={fill === 'full' ? '#F5B301' : '#e5e0e6'} />
@@ -35,16 +39,69 @@ const IconShield = () => <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none
 const IconReturn = () => <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M3 8a9 9 0 1 1-1 4" strokeLinecap="round" /><path d="M3 4v4h4" strokeLinecap="round" strokeLinejoin="round" /></svg>
 
 const RelatedCard = ({ p }) => {
+  const dispatch = useDispatch()
+  const wishlist = useSelector(state => state.wishlist.wishlist)
+  const cart = useSelector(state => state.cart.cart)
   const [liked, setLiked] = useState(false)
+
+  useEffect(() => {
+    const exists = wishlist.find(item => item._id === p._id)
+    setLiked(exists ? true : false)
+  }, [wishlist, p._id])
+
+  const addToWishlistHandler = () => {
+    dispatch(addToWishlist(p))
+    setLiked(true)
+  }
+
+  const removeFromWishlistHandler = () => {
+    dispatch(removeFromWishlist(p._id))
+    setLiked(false)
+  }
+
+  const addToCartHandler = (e) => {
+    e.stopPropagation()
+
+    const itemExists = cart.find(item => item._id === data._id)
+
+    if (itemExists) {
+      // Check if adding more would exceed stock
+      if (itemExists.quantity >= data.stock) {
+        toast.error(`Only ${data.stock} items available in stock`)
+        return
+      }
+      // Update quantity
+      const updatedItem = { ...data, quantity: itemExists.quantity + 1 }
+      dispatch(addToCart(updatedItem))
+      toast.success("Quantity updated in cart")
+      return
+    }
+
+    if (data.stock < 1) {
+      toast.error("Product out of stock")
+      return
+    }
+
+    const cartData = { ...data, quantity: 1 }
+    dispatch(addToCart(cartData))
+    toast.success("Item added to cart successfully")
+  }
   const selling = p.discountPrice
   const pct = p.originalPrice > selling ? Math.round(((p.originalPrice - selling) / p.originalPrice) * 100) : 0
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#f2e4ea] bg-white transition hover:shadow-lg">
       <div className="relative aspect-square bg-[#f1e8ec] p-4">
         <Link to={`/product/${p._id}`}>
           <img src={`${import.meta.env.VITE_URL}/uploads/${p.images?.[0]}`} alt={p.name} className="h-full w-full object-contain" />
         </Link>
-        <button onClick={() => setLiked((v) => !v)} className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white text-[#2E294E] shadow-sm transition hover:text-[#B5316B]">
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            liked ? removeFromWishlistHandler() : addToWishlistHandler()
+          }}
+          className="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white text-[#2E294E] shadow-sm transition hover:text-[#B5316B]"
+        >
           <IconHeart filled={liked} />
         </button>
       </div>
@@ -56,6 +113,12 @@ const RelatedCard = ({ p }) => {
           {pct > 0 && <span className="text-sm text-[#a89fb0] line-through">{formatPrice(p.originalPrice)}</span>}
           <span className="ml-auto text-sm text-emerald-600">{p.soldOut || 0} sold</span>
         </div>
+        <button
+          onClick={addToCartHandler}
+          className="mt-3 w-full rounded-xl bg-[#2E294E] py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        >
+          Add to Cart
+        </button>
       </div>
     </div>
   )
@@ -63,7 +126,10 @@ const RelatedCard = ({ p }) => {
 
 const ProductDetail = () => {
   const { id } = useParams()
+  const dispatch = useDispatch()
   const { allProducts, isLoading } = useSelector((state) => state.product)
+  const cart = useSelector(state => state.cart.cart)
+  const wishlist = useSelector(state => state.wishlist.wishlist)
   const product = allProducts?.find((item) => item._id === id)
 
   const [activeImg, setActiveImg] = useState(0)
@@ -72,27 +138,62 @@ const ProductDetail = () => {
   const [wishlisted, setWishlisted] = useState(false)
   const [tab, setTab] = useState('details')
 
-  const [reviews, setReviews] = useState([]) // no reviews backend yet — starts empty, not fake data
+  const [reviews, setReviews] = useState([])
   const [formRating, setFormRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [formText, setFormText] = useState('')
+
+  // Check wishlist status
+  useEffect(() => {
+    if (product) {
+      const exists = wishlist.find(item => item._id === product._id)
+      setWishlisted(exists ? true : false)
+    }
+  }, [wishlist, product])
 
   useEffect(() => {
     setActiveImg(0)
     setQty(1)
     setAdded(false)
-    setWishlisted(false)
     setTab('details')
   }, [id])
 
+  // Wishlist handlers
+  const addToWishlistHandler = () => {
+    dispatch(addToWishlist(product))
+    setWishlisted(true)
+    toast.success("Added to wishlist")
+  }
+
+  const removeFromWishlistHandler = () => {
+    dispatch(removeFromWishlist(product._id))
+    setWishlisted(false)
+    toast.success("Removed from wishlist")
+  }
+
+  // Add to cart handler
+  const handleAddToCart = () => {
+    const itemExists = cart.find(item => item._id === product._id)
+
+    if (itemExists) {
+      toast.error("Item already in cart")
+      return
+    }
+
+    if (product.stock < qty) {
+      toast.error("Product stock limited")
+      return
+    }
+
+    const cartData = { ...product, quantity: qty }
+    dispatch(addToCart(cartData))
+    setAdded(true)
+    toast.success("Item added to cart successfully")
+    setTimeout(() => setAdded(false), 1600)
+  }
+
   if (isLoading) {
-    return (
-      <div>
-        <Header />
-        <div className="mx-auto max-w-2xl px-6 py-24 text-center text-[#6b6480]">Loading…</div>
-        <Footer />
-      </div>
-    )
+    return <Loader />
   }
 
   if (!product) {
@@ -121,16 +222,10 @@ const ProductDetail = () => {
 
   const related = allProducts?.filter((p) => p._id !== product._id && p.category === product.category) || []
   const relatedList = related.slice(0, 4)
-  // compare by shop _id, not name — two shops could share a name
   const sellerProductCount = allProducts?.filter((p) => p.shop?._id === product.shop?._id).length || 0
 
   const dec = () => setQty((q) => Math.max(1, q - 1))
   const inc = () => setQty((q) => Math.min(product.stock, q + 1))
-
-  const handleAddToCart = () => {
-    setAdded(true)
-    setTimeout(() => setAdded(false), 1600)
-  }
 
   const submitReview = () => {
     if (!formRating || !formText.trim()) return
@@ -184,7 +279,10 @@ const ProductDetail = () => {
           <div>
             <div className="flex items-start justify-between gap-4">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#B5316B]">{product.category}</p>
-              <button onClick={() => setWishlisted((v) => !v)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#f2e4ea] text-[#2E294E] transition hover:border-[#B5316B] hover:text-[#B5316B]">
+              <button
+                onClick={() => wishlisted ? removeFromWishlistHandler() : addToWishlistHandler()}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#f2e4ea] text-[#2E294E] transition hover:border-[#B5316B] hover:text-[#B5316B]"
+              >
                 <IconHeart filled={wishlisted} />
               </button>
             </div>
@@ -238,7 +336,6 @@ const ProductDetail = () => {
               <img src={`${import.meta.env.VITE_URL}/uploads/${product.shop?.avatar}`} alt={product.shop?.name} className="h-14 w-14 rounded-full border-2 border-[#f2e4ea] object-cover" />
               <div className="min-w-0 flex-1">
                 <h2 className="truncate font-bold text-[#2E294E]">{product.shop?.name}</h2>
-                {/* placeholder — no review/rating system built yet */}
                 <div className="flex items-center gap-1.5 text-sm text-[#6b6480]"><Stars value={4} /><span>4.0 ratings</span></div>
               </div>
               <div className="flex gap-2">
@@ -338,7 +435,6 @@ const ProductDetail = () => {
               </div>
             )}
 
-            {/* --- seller --- */}
             {tab === 'seller' && (
               <div className="rounded-2xl border border-[#f2e4ea] p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">

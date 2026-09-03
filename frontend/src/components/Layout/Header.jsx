@@ -10,7 +10,6 @@ import {
   Menu,
   X,
 } from 'lucide-react'
-import { productData } from '../../static/data'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from './Navbar'
 import DropDown from './DropDown'
@@ -18,22 +17,24 @@ import { useSelector } from 'react-redux'
 import Cart from '../cart/Cart'
 import Wishlist from '../wishlist/Wishlist'
 
-
 const Header = () => {
   const navigate = useNavigate()
   
   const { isAuthenticated, user } = useSelector((state) => state.user)
+  const { allProducts } = useSelector((state) => state.product)
+  const cart = useSelector(state => state.cart.cart)
+  const wishlist = useSelector(state => state.wishlist.wishlist)
 
   const [searchTerm, setSearchTerm] = useState('')
   const [searchData, setSearchData] = useState(null)
-  // on Click on categories button it will show list
   const [active, setActive] = useState(false)
   const [openCart, setOpenCart] = useState(false)
   const [openWishlist, setOpenWishlist] = useState(false)
-  // mobile drawer (UI only – no logic change)
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const { allProducts } = useSelector((state) => state.product)
+  // Calculate total items (sum of all quantities)
+  const totalCartItems = cart.reduce((total, item) => total + (item.quantity || 1), 0)
+  const totalWishlistItems = wishlist.length
 
   const handleSearchChange = (e) => {
     const term = e.target.value
@@ -48,7 +49,6 @@ const Header = () => {
     setActive(!active)
   }
 
-  // Reusable search field (used in top bar + mobile drawer)
   const SearchField = ({ inDrawer = false }) => (
     <div
       className={`relative flex items-center justify-between rounded-full border border-gray-300/50 bg-[#f1e8ec] pl-5 pr-1 py-1.5 transition-shadow duration-300 focus-within:ring-2 focus-within:ring-[#2E294E]/10 ${inDrawer ? 'w-full' : 'w-full max-w-md'
@@ -65,7 +65,6 @@ const Header = () => {
         <Search className="w-3.5 text-white" />
       </div>
 
-      {/* search result */}
       {searchData && searchData.length > 0 ? (
         <div className="absolute top-[115%] left-0 right-0 bg-white shadow-xl shadow-[#2E294E]/5 border border-gray-100 max-h-[60vh] overflow-y-auto rounded-2xl z-30 p-1.5 animate-[fd_0.22s_ease-out]">
           {searchData.map((i, index) => (
@@ -93,10 +92,9 @@ const Header = () => {
       <style>{`@keyframes fd{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
         @keyframes sl{from{opacity:0;transform:translateX(-100%)}to{opacity:1;transform:none}}`}</style>
 
-      {/* ===== Top bar ===== */}
+      {/* Top bar */}
       <div className="bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto flex items-center gap-3 md:gap-6 px-4 md:px-8 py-3">
-          {/* mobile menu */}
           <button
             onClick={() => setMobileOpen(true)}
             className="lg:hidden text-[#2E294E] shrink-0"
@@ -105,7 +103,6 @@ const Header = () => {
             <Menu />
           </button>
 
-          {/* Brand */}
           <Link to="/" className="shrink-0">
             <div className="inline-flex items-center px-3 md:px-4 py-1 rounded-full bg-gradient-to-r from-[#F8F4FF] to-[#FFF8F2] shadow-md transition-transform duration-300 hover:scale-[1.02]">
               <h1 className="font-['Dancing_Script'] text-2xl md:text-4xl font-bold bg-gradient-to-r from-[#2E294E] to-[#6C63FF] bg-clip-text text-transparent">
@@ -114,12 +111,10 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Search (desktop) */}
           <div className="hidden md:flex flex-1 justify-center">
             <SearchField />
           </div>
 
-          {/* Become Seller */}
           <div className="ml-auto md:ml-0 shrink-0">
             <button className="bg-[#2E294E] rounded-full px-4 py-2 text-white text-sm font-medium tracking-wide shadow-sm transition-all duration-200 hover:bg-[#3d3767] hover:shadow-md"
               onClick={() => { navigate('/shop-create') }}>
@@ -129,16 +124,14 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Search (mobile) */}
         <div className="md:hidden px-4 pb-3">
           <SearchField />
         </div>
       </div>
 
-      {/* ===== Nav strip ===== */}
+      {/* Nav strip */}
       <div className="sticky top-0 z-10 bg-[#2E294E] shadow-sm">
         <div className="max-w-7xl mx-auto h-16 px-4 md:px-8 flex items-center justify-between">
-          {/* categories */}
           <div className="relative">
             <div
               className={`flex items-center bg-[#f1e8ec] px-4 md:px-6 py-1.5 cursor-pointer select-none transition-colors hover:bg-[#e6dae0] ${active ? 'rounded-t-2xl' : 'rounded-2xl'
@@ -158,31 +151,43 @@ const Header = () => {
             {active && <DropDown setActive={setActive} />}
           </div>
 
-          {/* nav (desktop) */}
           <div className="hidden lg:block">
             <Navbar />
           </div>
 
-          {/* CTA */}
           <div className="flex items-center gap-4 text-white">
+            {/* Wishlist Button with Count */}
             <button
               onClick={() => setOpenWishlist(true)}
               aria-label="Wishlist"
-              className="transition-colors hover:text-[#dfb3c7]"
+              className="relative transition-colors hover:text-[#dfb3c7]"
             >
               <Heart className="w-5" />
+              {totalWishlistItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalWishlistItems}
+                </span>
+              )}
             </button>
+
+            {/* Cart Button with Count */}
             <button
               onClick={() => setOpenCart(true)}
               aria-label="Cart"
-              className="transition-colors hover:text-[#dfb3c7]"
+              className="relative transition-colors hover:text-[#dfb3c7]"
             >
               <ShoppingCart className="w-5" />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalCartItems}
+                </span>
+              )}
             </button>
+
             {isAuthenticated ? (
               <Link to={'/profile'}>
                 <img
-                  src={`${import.meta.env.VITE_URL}/uploads/${user.avatar}`}
+                  src={`${import.meta.env.VITE_URL}/uploads/${user?.avatar}`}
                   alt=""
                   className="w-7 h-7 rounded-full object-cover ring-2 ring-[#dfb3c7]/60 transition hover:ring-[#dfb3c7]"
                 />
@@ -199,7 +204,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ===== Mobile drawer ===== */}
+      {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
@@ -235,11 +240,11 @@ const Header = () => {
         </div>
       )}
 
-      {/* cart popup */}
-      {openCart ? <Cart setOpenCart={setOpenCart} /> : null}
+      {/* Cart popup */}
+      {openCart && <Cart setOpenCart={setOpenCart} />}
 
-      {/* wishlist popup */}
-      {openWishlist ? <Wishlist setOpenWishlist={setOpenWishlist} /> : null}
+      {/* Wishlist popup */}
+      {openWishlist && <Wishlist setOpenWishlist={setOpenWishlist} />}
     </div>
   )
 }

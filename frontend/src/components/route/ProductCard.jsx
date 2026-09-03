@@ -1,11 +1,65 @@
 import { Heart, ShoppingBag, Star, Clock, Calendar } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlist'
+import { addToCart } from '../../redux/actions/cart'
+import { toast } from 'react-hot-toast'
 
 const ProductCard = ({ data, isEvent = false }) => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const wishlist = useSelector(state => state.wishlist.wishlist)
+  const cart = useSelector(state => state.cart.cart)
+
   const [click, setClick] = useState(false)
   const [timeLeft, setTimeLeft] = useState('')
-  const navigate = useNavigate()
+
+  // Check if product is in wishlist
+  useEffect(() => {
+    const exists = wishlist.find(item => item._id === data._id)
+    setClick(exists ? true : false)
+  }, [wishlist, data._id])
+
+  // Wishlist handlers
+  const addToWishlistHandler = () => {
+    dispatch(addToWishlist(data))
+    setClick(true)
+  }
+
+  const removeFromWishlistHandler = () => {
+    dispatch(removeFromWishlist(data._id))
+    setClick(false)
+  }
+
+  // Add to cart handler
+  const addToCartHandler = (e) => {
+    e.stopPropagation()
+
+    const itemExists = cart.find(item => item._id === data._id)
+
+    if (itemExists) {
+      // Check if adding more would exceed stock
+      if (itemExists.quantity >= data.stock) {
+        toast.error(`Only ${data.stock} items available in stock`)
+        return
+      }
+      // Update quantity
+      const updatedItem = { ...data, quantity: itemExists.quantity + 1 }
+      dispatch(addToCart(updatedItem))
+      toast.success("Quantity updated in cart")
+      return
+    }
+
+    if (data.stock < 1) {
+      toast.error("Product out of stock")
+      return
+    }
+
+    const cartData = { ...data, quantity: 1 }
+    dispatch(addToCart(cartData))
+    toast.success("Item added to cart successfully")
+  }
 
   const calculateDiscount = () => {
     if (!data?.originalPrice || !data?.discountPrice) return 0
@@ -19,7 +73,6 @@ const ProductCard = ({ data, isEvent = false }) => {
 
   // Timer logic for events
   useEffect(() => {
-    // Only run timer if it's an event and has finish_date
     if (!isEvent || !data?.finish_date) {
       setTimeLeft('')
       return
@@ -29,8 +82,6 @@ const ProductCard = ({ data, isEvent = false }) => {
       const now = new Date().getTime()
       const finishDate = new Date(data.finish_date).getTime()
       const difference = finishDate - now
-
-      console.log('Time difference:', difference) // For debugging
 
       if (difference <= 0) {
         setTimeLeft('Ended')
@@ -49,17 +100,11 @@ const ProductCard = ({ data, isEvent = false }) => {
       }
     }
 
-    // Calculate immediately
     calculateTimeLeft()
-    
-    // Then update every second
     const timer = setInterval(calculateTimeLeft, 1000)
-
-    // Cleanup interval on unmount or when dependencies change
     return () => clearInterval(timer)
   }, [isEvent, data?.finish_date])
 
-  // Check if event is running
   const isEventRunning = () => {
     if (!isEvent || !data?.start_date || !data?.finish_date) return false
     const now = new Date().getTime()
@@ -70,7 +115,6 @@ const ProductCard = ({ data, isEvent = false }) => {
 
   const eventStatus = isEventRunning()
 
-  // Determine what to show in the meta row
   const renderMetaContent = () => {
     if (isEvent) {
       if (eventStatus) {
@@ -111,8 +155,7 @@ const ProductCard = ({ data, isEvent = false }) => {
         ) : (
           <span />
         )}
-        
-        {/* Timer or Event Status */}
+
         {renderMetaContent()}
       </div>
 
@@ -131,7 +174,10 @@ const ProductCard = ({ data, isEvent = false }) => {
         <div className="group/heart absolute right-6 top-5">
           <button
             aria-label="Add to wishlist"
-            onClick={() => setClick(!click)}
+            onClick={(e) => {
+              e.stopPropagation()
+              click ? removeFromWishlistHandler() : addToWishlistHandler()
+            }}
             className="grid h-9 w-9 place-items-center rounded-full bg-white shadow-sm transition hover:scale-105"
           >
             <Heart
@@ -140,7 +186,7 @@ const ProductCard = ({ data, isEvent = false }) => {
             />
           </button>
           <span className="pointer-events-none absolute right-0 -top-8 hidden whitespace-nowrap rounded bg-[#2E294E] px-2 py-1 text-xs text-white group-hover/heart:block">
-            Add to wishlist
+            {click ? 'Remove from wishlist' : 'Add to wishlist'}
           </span>
         </div>
       </div>
@@ -178,7 +224,10 @@ const ProductCard = ({ data, isEvent = false }) => {
             <p className="text-lg font-bold text-[#2E294E]">RS {data.discountPrice}</p>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-full bg-[#2E294E] px-3 py-2 transition hover:opacity-90">
+          <div
+            className="flex items-center gap-1.5 rounded-full bg-[#2E294E] px-3 py-2 transition hover:opacity-90 cursor-pointer"
+            onClick={addToCartHandler}
+          >
             <ShoppingBag className="h-4 w-4 text-white" strokeWidth={2} />
             <button className="text-xs font-semibold text-white">Add to cart</button>
           </div>
