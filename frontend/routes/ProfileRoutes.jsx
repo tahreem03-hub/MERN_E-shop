@@ -1,4 +1,5 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
 import ProfileLayout from '../src/pages/ProfileLayout'
 import Profile from '../src/components/profile/Profile'
 import Orders from '../src/components/profile/Orders'
@@ -7,9 +8,8 @@ import TrackOrder from '../src/components/profile/TrackOrder'
 import ResetPassword from '../src/components/profile/ResetPassword'
 import Address from '../src/components/profile/Address'
 import Inbox from '../src/components/profile/Inbox'
-// ProfileRoutes.jsx
-import { Routes, Route } from 'react-router-dom'
 import PaymentMethods from '../src/components/profile/PaymentMethods'
+import ChangePassword from '../src/components/profile/ChangePassword'
 
 const ProfileRoutes = () => {
   return (
@@ -21,7 +21,7 @@ const ProfileRoutes = () => {
         <Route path='inbox' element={<Inbox />} />
         <Route path='track-order' element={<TrackOrder />} />
         <Route path='payment-methods' element={<PaymentMethods />} />
-        <Route path='change-password' element={<ResetPassword />} />
+        <Route path='change-password' element={<ChangePassword />} />
         <Route path='address' element={<Address />} />
       </Route>
     </Routes>

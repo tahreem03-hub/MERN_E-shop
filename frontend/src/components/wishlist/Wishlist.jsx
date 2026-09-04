@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeFromWishlist } from '../../redux/actions/wishlist'
 import { addToCart } from '../../redux/actions/cart'
 import { toast } from 'react-hot-toast'
+import Lottie from "react-lottie-player";
+import animationData from "../../assets/animations/emptyCart.json";
 
 const WishlistItem = ({ data, onRemove, onAddToCart }) => {
     return (
@@ -109,9 +111,15 @@ const Wishlist = ({ setOpenWishlist }) => {
                             />
                         ))
                     ) : (
-                        <h1 className='text-2xl flex items-center justify-center h-[300px] text-pink-600/70'>
-                            Wishlist is empty!
-                        </h1>
+                        <div className="w-full h-screen flex items-center justify-center">
+                            <Lottie
+                                loop
+                                play
+                                animationData={animationData}
+                                style={{ width: 300, height: 300 }}
+                                rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
+                            />
+                        </div>
                     )}
                 </div>
             </div>

@@ -1,137 +1,167 @@
-import { Camera } from 'lucide-react'
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import axios from 'axios'
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserInfo, updateAvatar, loadUser } from "../../redux/actions/user";
+import { toast } from "react-hot-toast";
 
 const Profile = () => {
-  const { user } = useSelector((state) => state.user)
-
-  const [name, setName] = useState(user.name)
-  const [phone, setPhone] = useState(user.phoneNumber || "")
-  const [email, setEmail] = useState(user.email || "")
-  const [password, setPassword] = useState("")
-  const [avatar, setAvatar] = useState()
-  const [avatarPreview, setAvatarPreview] = useState()
-
-  const handleImage = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setAvatar(file)
-      setAvatarPreview(URL.createObjectURL(file))
+  const dispatch = useDispatch();
+  const { user, error, success, loading } = useSelector((state) => state.user);
+  
+  const [avatar, setAvatar] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhoneNumber(user.phoneNumber || "");
     }
-  }
-
+  }, [user]);
+  
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch({ type: "clearErrors" });
+    }
+    if (success) {
+      toast.success("Profile updated successfully");
+      dispatch({ type: "clearMessages" });
+      dispatch(loadUser());
+    }
+  }, [error, success, dispatch]);
+  
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     
-}
-
-return (
-  <div className="mx-auto max-w-2xl px-4 py-10">
-    <div className="rounded-2xl border border-[#f2e4ea] bg-white p-6 shadow-sm sm:p-8">
-      <h1 className="mb-8 text-2xl font-bold text-[#2E294E]">Profile Settings</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* avatar */}
-        <div className="flex justify-center">
-          <div className="relative">
-            <img
-              src={
-                avatarPreview
-                  ? avatarPreview
-                  : user?.avatar
-                    ? `${import.meta.env.VITE_URL}/uploads/${user.avatar}`
-                    : "/default-avatar.png"
-              }
-              className="h-40 w-40 rounded-full border-4 border-[#2E294E] object-cover"
-              alt="Profile avatar"
-            />
-            <label
-              htmlFor="avatar"
-              className="absolute bottom-2 left-[65%] cursor-pointer rounded-full bg-[#f1e8ec] p-2 shadow-sm transition hover:bg-[#e8d8de]"
+    if (!password) {
+      toast.error("Please enter your password to confirm changes");
+      return;
+    }
+    
+    const data = { name, email, phoneNumber, password };
+    dispatch(updateUserInfo(data));
+  };
+  
+  const handleImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setAvatar(URL.createObjectURL(file));
+    
+    const formData = new FormData();
+    formData.append("image", file);
+    
+    dispatch(updateAvatar(formData));
+  };
+  
+  return (
+    <div className="w-full max-w-4xl mx-auto p-6">
+      <div className="flex flex-col items-center mb-8">
+        <div className="relative">
+          <img
+            src={avatar || `${import.meta.env.VITE_URL}/uploads/${user?.avatar}`}
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover border-4 border-pink-500"
+          />
+          <label
+            htmlFor="avatar"
+            className="absolute bottom-0 right-0 bg-pink-600 rounded-full p-2 cursor-pointer hover:bg-pink-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-white"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <Camera className="h-5 w-5 text-[#2E294E]" strokeWidth={1.5} />
-              <input
-                type="file"
-                id="avatar"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImage}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
               />
-            </label>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </label>
+          <input
+            type="file"
+            id="avatar"
+            onChange={handleImage}
+            className="hidden"
+            accept="image/*"
+          />
         </div>
-
-        {/* name + email */}
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium text-[#2E294E]">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-xl border border-[#f2e4ea] px-3 py-2 text-sm text-[#2E294E] outline-none transition focus:border-[#2E294E]"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-[#2E294E]">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-[#f2e4ea] px-3 py-2 text-sm text-[#6b6480] outline-none"
-            />
-          </div>
+        <p className="text-xs text-gray-500 mt-2">Click camera icon to change photo</p>
+      </div>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Full Name</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none"
+            required
+          />
         </div>
-
-        {/* phone + password */}
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <label htmlFor="phone" className="mb-1 block text-sm font-medium text-[#2E294E]">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              id="phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="03XX-XXXXXXX"
-              className="w-full rounded-xl border border-[#f2e4ea] px-3 py-2 text-sm text-[#2E294E] outline-none transition focus:border-[#2E294E]"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-[#2E294E]">
-              Enter Your Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="****"
-              className="w-full rounded-xl border border-[#f2e4ea] px-3 py-2 text-sm text-[#2E294E] outline-none transition focus:border-[#2E294E]"
-            />
-          </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none"
+            required
+          />
         </div>
-
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            type="text"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Password <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your current password to update profile"
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 outline-none"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Required to confirm identity before updating
+          </p>
+        </div>
+        
         <button
           type="submit"
-          className="w-full rounded-xl bg-[#2E294E] py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+          disabled={loading}
+          className="w-full bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition disabled:opacity-50"
         >
-          Update
+          {loading ? "Updating..." : "Update Profile"}
         </button>
       </form>
     </div>
-  </div>
-)
-}
+  );
+};
 
-export default Profile
+export default Profile;

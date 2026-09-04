@@ -171,6 +171,183 @@ router.get('/logout', catchAsyncError(async (req, res, next) => {
     }
 }))
 
+// Update User Profile Information
+router.put(
+  "/update-user-info",
+  isAuthenticated,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const { email, password, phoneNumber, name } = req.body;
+      
+      const user = await User.findById(req.user.id).select("+password");
+      
+      if (!user) {
+        return next(new ErrorHandler("User doesn't exist", 404));
+      }
+      
+      const isPasswordValid = await user.comparePassword(password);
+      
+      if (!isPasswordValid) {
+        return res.status(400).json({
+          success: false,
+          message: "Password is incorrect",
+        });
+      }
+      
+      user.name = name || user.name;
+      user.email = email || user.email;
+      user.phoneNumber = phoneNumber || user.phoneNumber;
+      
+      await user.save();
+      
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+
+
+// Update Password
+router.put(
+  "/update-password",
+  isAuthenticated,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.id).select("+password");
+      
+      const { oldPassword, newPassword, confirmPassword } = req.body;
+      
+      // Check old password
+      const isPasswordMatch = await user.comparePassword(oldPassword);
+      
+      if (!isPasswordMatch) {
+        return next(new ErrorHandler("Old password is incorrect", 400));
+      }
+      
+      // Check new passwords match
+      if (newPassword !== confirmPassword) {
+        return next(new ErrorHandler("Passwords do not match", 400));
+      }
+      
+      user.password = newPassword;
+      await user.save();
+      
+      res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Update User Avatar
+router.put(
+  "/update-avatar",
+  isAuthenticated,
+  upload.single("image"),
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const existUser = await User.findById(req.user.id);
+      
+      // Delete previous avatar if exists
+      if (existUser.avatar) {
+        const previousAvatarPath = `uploads/${existUser.avatar}`;
+        if (fs.existsSync(previousAvatarPath)) {
+          fs.unlinkSync(previousAvatarPath);
+        }
+      }
+      
+      const fileUrl = req.file.filename;
+      
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        { avatar: fileUrl },
+        { new: true }
+      );
+      
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// Add/Update Address
+router.put(
+  "/update-address",
+  isAuthenticated,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const { country, city, address1, address2, zipCode, addressType } = req.body
+      
+      const user = await User.findById(req.user.id)
+      
+      // Check if address type already exists
+      const existingAddress = user.addresses.find(
+        (addr) => addr.addressType === addressType
+      )
+      
+      if (existingAddress) {
+        // Update existing
+        const updatedAddresses = user.addresses.map((addr) =>
+          addr.addressType === addressType
+            ? { country, city, address1, address2, zipCode, addressType }
+            : addr
+        )
+        user.addresses = updatedAddresses
+      } else {
+        // Add new
+        user.addresses.push({ country, city, address1, address2, zipCode, addressType })
+      }
+      
+      await user.save()
+      
+      res.status(200).json({
+        success: true,
+        user,
+      })
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500))
+    }
+  })
+)
+
+// Delete Address
+router.delete(
+  "/delete-address/:addressId",
+  isAuthenticated,
+  catchAsyncError(async (req, res, next) => {
+    try {
+      const { addressId } = req.params
+      
+      const user = await User.findById(req.user.id)
+      
+      user.addresses = user.addresses.filter(
+        (addr) => addr._id.toString() !== addressId
+      )
+      
+      await user.save()
+      
+      res.status(200).json({
+        success: true,
+        user,
+      })
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500))
+    }
+  })
+)
+
 
 module.exports = router;
 

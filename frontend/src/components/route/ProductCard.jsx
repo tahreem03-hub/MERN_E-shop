@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlist'
 import { addToCart } from '../../redux/actions/cart'
 import { toast } from 'react-hot-toast'
+import Loader from '../Layout/Loader'
 
 const ProductCard = ({ data, isEvent = false }) => {
   const dispatch = useDispatch()
@@ -121,7 +122,7 @@ const ProductCard = ({ data, isEvent = false }) => {
         return (
           <span className="flex items-center gap-1 text-xs text-[#6b6480]">
             <Clock className="h-3.5 w-3.5 animate-pulse" strokeWidth={2} />
-            {timeLeft || 'Loading...'}
+            {timeLeft || <Loader/>}
           </span>
         )
       } else {

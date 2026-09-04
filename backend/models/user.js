@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   phoneNumber: {
-    type: Number,
+    type: String,  // ← Changed from Number to String
     trim: true,
   },
   addresses: [
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
       city: { type: String },
       address1: { type: String },
       address2: { type: String },
-      zipCode: { type: String },
+      zipCode: { type: String },  // ← Changed from Number to String
       addressType: { type: String },
     },
   ],
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true,
+    default: "default-avatar.png",  // ← Changed from required: true
   },
   avatarPublicId: {
     type: String,
@@ -53,23 +53,23 @@ const userSchema = new mongoose.Schema({
   resetPasswordTime: Date,
 });
 
-// Hash password before saving to database
+// Hash password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return;
   }
-
   this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
-// Generate JWT token for authentication
+// Generate JWT token
 userSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 };
 
-// Compare entered password with stored hashed password
+// Compare password
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

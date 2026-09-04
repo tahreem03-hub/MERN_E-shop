@@ -1,12 +1,13 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import Loader from "../src/components/Layout/Loader";
 
 const ProtectedRoute = ({ children }) => {
   const { loading, isAuthenticated } = useSelector((state) => state.user);
 
   // Handle loading state
   if (loading) {
-    return <div>Loading...</div>; // You can replace this with a loading spinner or any other fallback UI
+    return <Loader/>; // You can replace this with a loading spinner or any other fallback UI
   }
 
   // Check if the user is authenticated

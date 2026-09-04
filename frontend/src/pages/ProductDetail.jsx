@@ -267,7 +267,7 @@ const ProductDetail = () => {
               </div>
               <div className="relative flex-1">
                 {showDiscount && (
-                  <span className="absolute left-4 top-4 z-10 rounded-full bg-[#B5316B] px-3 py-1 text-xs font-semibold text-white">{pct}% off</span>
+                  <span className="absolute left-4 top-4 rounded-full bg-[#B5316B] px-3 py-1 text-xs font-semibold text-white">{pct}% off</span>
                 )}
                 <div className="flex aspect-square items-center justify-center rounded-3xl border border-[#f2e4ea] bg-[#f1e8ec] p-5 shadow-sm sm:p-8">
                   <img src={`${import.meta.env.VITE_URL}/uploads/${images[activeImg]}`} alt={product.name} className="max-h-full max-w-full object-contain" />

@@ -3,6 +3,9 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToCart, removeFromCart } from '../../redux/actions/cart'
 import { toast } from 'react-hot-toast'
+import Lottie from "react-lottie-player";
+import animationData from "../../assets/animations/emptyCart.json";
+
 
 const CartItem = ({ data, onIncrement, onDecrement, onRemove }) => {
     return (
@@ -36,8 +39,8 @@ const CartItem = ({ data, onIncrement, onDecrement, onRemove }) => {
             </div>
 
             <div className='flex items-center'>
-                <X onClick={() => onRemove(data._id)} 
-                   className='ml-5 text-gray-400 w-4 cursor-pointer hover:text-red-500' strokeWidth={1} />
+                <X onClick={() => onRemove(data._id)}
+                    className='ml-5 text-gray-400 w-4 cursor-pointer hover:text-red-500' strokeWidth={1} />
             </div>
         </div>
     )
@@ -48,7 +51,7 @@ const Cart = ({ setOpenCart }) => {
     const cart = useSelector(state => state.cart.cart)
 
     // Calculate total
-    const totalPrice = cart.reduce((acc, item) => 
+    const totalPrice = cart.reduce((acc, item) =>
         acc + (item.quantity * item.discountPrice), 0
     )
 
@@ -107,9 +110,15 @@ const Cart = ({ setOpenCart }) => {
                             />
                         ))
                     ) : (
-                        <h1 className='text-2xl flex items-center justify-center h-[300px] text-pink-600/70'>
-                            Cart is empty!
-                        </h1>
+                        <div className="w-full h-screen flex items-center justify-center">
+                            <Lottie
+                                loop
+                                play
+                                animationData={animationData}
+                                style={{ width: 300, height: 300 }}
+                                rendererSettings={{ preserveAspectRatio: "xMidYMid slice" }}
+                            />
+                        </div>
                     )}
                 </div>
 
