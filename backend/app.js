@@ -17,6 +17,7 @@ const shop = require('./controller/shopController')
 const product = require('./controller/productController')
 const event = require('./controller/eventController')
 const coupon = require("./controller/couponCodeController");
+const order = require("./controller/orderController")
 
 
 app.use('/api/user', user)
@@ -24,7 +25,7 @@ app.use('/api/shop', shop)
 app.use('/api/product', product)
 app.use('/api/event', event)
 app.use("/api/coupon", coupon);
-
+app.use("/api/order", order)
 
 
 

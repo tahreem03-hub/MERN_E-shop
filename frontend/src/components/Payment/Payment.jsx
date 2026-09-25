@@ -14,10 +14,15 @@ const Payment = () => {
     setOrderData(data);
   }, []);
 
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+    
+
   const order = {
     cart: orderData?.cart,
     shippingAddress: orderData?.shippingAddress,
-    user: user && user,
+    user: user?._id,
     totalPrice: orderData?.totalPrice,
   };
 

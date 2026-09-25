@@ -1,9 +1,9 @@
 import React from 'react'
-import Lottie from 'react-lottie'
+import Lottie from "react-lottie-player";
 import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
 import CheckoutSteps from '../components/checkout/CheckoutSteps'
-import animationData from '../Assests/animations/107043-success.json'
+import animationData from '../assets/animations/success.json'
 
 const Success = () => {
   const defaultOptions = {
@@ -20,7 +20,7 @@ const Success = () => {
       <Lottie options={defaultOptions} width={280} height={280} />
 
       <h1 className="mt-4 text-2xl sm:text-3xl font-bold text-[#2E294E] text-center">
-        Your order is successful 🎉
+        Your order is successful
       </h1>
 
       <p className="mt-3 text-sm text-[#6b6480] text-center max-w-md">

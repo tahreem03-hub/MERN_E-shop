@@ -26,6 +26,8 @@ import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, Sh
 import { getAllProducts } from './redux/actions/product'
 import CheckoutPage from './pages/CheckoutPage'
 import PaymentPage from './pages/PaymentPage'
+import OrderDetailsPage from './pages/OrderDetailsPage'
+import OrderSuccessPage from './pages/OrderSuccessPage'
 
 
 
@@ -136,6 +138,20 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/order/success"
+          element={
+            <ProtectedRoute>
+              <OrderSuccessPage />
+            </ProtectedRoute>
+          }
+        />
+
+
+
+
+        <Route path="/user/order/:id" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
 
 
       </Routes>
