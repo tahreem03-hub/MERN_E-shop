@@ -1,6 +1,7 @@
 import React from 'react'
 import DashboardHeader from '../../components/Shop/layout/DashboardHeader'
 import DashboardSidebar from '../../components/Shop/layout/DashboardSidebar'
+import DashboardHero from '../../components/Shop/DashboardHero'
 
 const ShopDashboardPage = () => {
   return (
@@ -11,7 +12,7 @@ const ShopDashboardPage = () => {
           <DashboardSidebar />
         </div>
         <div className="w-full flex justify-center">
-          {/* dashboard content goes here */}
+          <DashboardHero />
         </div>
       </div>
     </div>

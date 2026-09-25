@@ -22,7 +22,7 @@ import SellerActivaetionPage from './pages/SellerActivaetionPage'
 
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ProfileRoutes from '../routes/ProfileRoutes'
-import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons } from '../routes/ShopRoutes'
+import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons, ShopAllOrders, ShopWithDrawMoneyPage, ShopInboxPage, ShopAllRefunds, ShopSettingsPage } from '../routes/ShopRoutes'
 import { getAllProducts } from './redux/actions/product'
 import CheckoutPage from './pages/CheckoutPage'
 import PaymentPage from './pages/PaymentPage'
@@ -63,6 +63,8 @@ const App = () => {
           }
         />
 
+        {/* shop routes */}
+
         <Route path='shop-create' element={<ShopCreatePage />} />
         <Route path='shop-login' element={<ShopLoginPage />} />
         <Route path='/seller/activation/:activation_token' element={<SellerActivaetionPage />} />
@@ -74,7 +76,6 @@ const App = () => {
               <ShopDashboardPage />
             </SellerProtectedRoute>}
         />
-
         <Route
           path='/dashboard/create-product'
           element={
@@ -83,7 +84,6 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-
         <Route
           path='/dashboard/products'
           element={
@@ -92,8 +92,6 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-
-
         <Route
           path='/dashboard/create-event'
           element={
@@ -111,8 +109,6 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-
-
         <Route
           path='/dashboard/coupons'
           element={
@@ -120,6 +116,45 @@ const App = () => {
               <ShopAllCoupons />
             </SellerProtectedRoute>}
         />
+        <Route
+          path='/dashboard/orders'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllOrders />
+            </SellerProtectedRoute>}
+        />
+        <Route
+          path='/dashboard/withdraw-money'
+          element={
+            <SellerProtectedRoute>
+              <ShopWithDrawMoneyPage />
+            </SellerProtectedRoute>}
+        />
+        <Route
+          path='/dashboard/messages'
+          element={
+            <SellerProtectedRoute>
+              <ShopInboxPage />
+            </SellerProtectedRoute>}
+        />
+        <Route
+          path='/dashboard/refunds'
+          element={
+            <SellerProtectedRoute>
+              <ShopAllRefunds />
+            </SellerProtectedRoute>}
+        />
+
+        <Route
+          path='/dashboard/settings'
+          element={
+            <SellerProtectedRoute>
+              <ShopSettingsPage />
+            </SellerProtectedRoute>}
+        />
+
+
+
 
         <Route
           path="/checkout"
