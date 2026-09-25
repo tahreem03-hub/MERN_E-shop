@@ -24,6 +24,8 @@ import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ProfileRoutes from '../routes/ProfileRoutes'
 import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons } from '../routes/ShopRoutes'
 import { getAllProducts } from './redux/actions/product'
+import CheckoutPage from './pages/CheckoutPage'
+import PaymentPage from './pages/PaymentPage'
 
 
 
@@ -115,6 +117,24 @@ const App = () => {
             <SellerProtectedRoute>
               <ShopAllCoupons />
             </SellerProtectedRoute>}
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          }
         />
 
 

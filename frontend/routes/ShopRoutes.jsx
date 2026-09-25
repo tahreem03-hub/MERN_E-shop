@@ -17,6 +17,5 @@ export {
     ShopAllEvents,
     ShopCreateEvent,
     ShopAllCoupons,
-    
 
 }

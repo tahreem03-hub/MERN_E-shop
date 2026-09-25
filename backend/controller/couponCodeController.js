@@ -11,20 +11,32 @@ router.post(
   "/create-coupon-code",
   isSeller,
   catchAsyncError(async (req, res, next) => {
-    // Fix: Check if coupon exists for this specific shop
-    const existingCoupon = await CouponCode.findOne({ 
-      name: req.body.name,
-      "shop._id": req.seller._id
+    // Clean the name the same way the schema does (trim + uppercase)
+    const name = String(req.body.name || "").trim().toUpperCase();
+
+    // Does this shop already have a coupon with this name?
+    const existingCoupon = await CouponCode.findOne({
+      name,
+      shopId: req.seller._id,
     });
 
     if (existingCoupon) {
-      return next(new ErrorHandler("Coupon code already exists for your shop!", 400));
+      return next(
+        new ErrorHandler("Coupon code already exists for your shop!", 400)
+      );
     }
 
-    // Fix: Use req.seller instead of req.body.shop to ensure proper data
     const couponData = {
-      ...req.body,
-      shop: req.seller
+      name,
+      value: req.body.value,
+      minAmount: req.body.minAmount,
+      maxAmount: req.body.maxAmount,
+      appliesTo: req.body.appliesTo || "entireOrder",
+      category: req.body.category,
+      selectedProduct: req.body.selectedProduct,
+      expiryDate: req.body.expiryDate,
+      usageLimit: req.body.usageLimit,
+      shopId: req.seller._id, // only the ID, not the whole seller
     };
 
     const couponCode = await CouponCode.create(couponData);
@@ -40,7 +52,8 @@ router.post(
 router.get(
   "/get-coupon/:id",
   catchAsyncError(async (req, res, next) => {
-    const couponCodes = await CouponCode.find({ "shop._id": req.params.id });
+    // Mongoose turns the string id into an ObjectId because shopId is typed
+    const couponCodes = await CouponCode.find({ shopId: req.params.id });
 
     res.status(200).json({
       success: true,
@@ -60,8 +73,8 @@ router.delete(
       return next(new ErrorHandler("Coupon code not found", 404));
     }
 
-    // Fix: Proper ownership check
-    if (couponCode.shop._id.toString() !== req.seller._id.toString()) {
+    // Ownership check
+    if (couponCode.shopId.toString() !== req.seller._id.toString()) {
       return next(
         new ErrorHandler("You are not the owner of this coupon", 403)
       );
@@ -72,6 +85,22 @@ router.delete(
     res.status(200).json({
       success: true,
       message: "Coupon code deleted successfully!",
+    });
+  })
+);
+
+
+// Get coupon value by name
+router.get(
+  "/get-coupon-value/:name",
+  catchAsyncError(async (req, res, next) => {
+    const couponCode = await CouponCode.findOne({
+      name: req.params.name.trim().toUpperCase(),
+    });
+
+    res.status(200).json({
+      success: true,
+      couponCode,
     });
   })
 );

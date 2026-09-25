@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const couponCodeSchema = new mongoose.Schema({
   name: {
     type: String,
+    trim: true,
+    uppercase: true,
     required: [true, "Please enter your coupon code name!"],
   },
   value: {
@@ -15,8 +17,11 @@ const couponCodeSchema = new mongoose.Schema({
   maxAmount: {
     type: Number,
   },
-  shop: {
-    type: Object,
+
+  // only the shop's ID (not the whole seller object)
+  shopId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Shop",
     required: true,
   },
 
@@ -60,6 +65,7 @@ const couponCodeSchema = new mongoose.Schema({
   },
 });
 
-couponCodeSchema.index({ name: 1, "shop._id": 1 }, { unique: true });
+// Same coupon name is allowed in different shops, but not twice in one shop
+couponCodeSchema.index({ name: 1, shopId: 1 }, { unique: true });
 
 module.exports = mongoose.model("CouponCode", couponCodeSchema);

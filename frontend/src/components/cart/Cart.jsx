@@ -5,6 +5,7 @@ import { addToCart, removeFromCart } from '../../redux/actions/cart'
 import { toast } from 'react-hot-toast'
 import Lottie from "react-lottie-player";
 import animationData from "../../assets/animations/emptyCart.json";
+import { useNavigate } from 'react-router-dom'
 
 
 const CartItem = ({ data, onIncrement, onDecrement, onRemove }) => {
@@ -49,6 +50,8 @@ const CartItem = ({ data, onIncrement, onDecrement, onRemove }) => {
 const Cart = ({ setOpenCart }) => {
     const dispatch = useDispatch()
     const cart = useSelector(state => state.cart.cart)
+
+    const navigate = useNavigate();
 
     // Calculate total
     const totalPrice = cart.reduce((acc, item) =>
@@ -124,7 +127,8 @@ const Cart = ({ setOpenCart }) => {
 
                 {cart.length > 0 && (
                     <div className='flex justify-center mt-5'>
-                        <button className='w-[80%] h-12 py-2 bg-pink-600 m-2 flex justify-center items-center text-white font-bold text-lg rounded'>
+                        <button className='w-[80%] h-12 py-2 bg-pink-600 m-2 flex justify-center items-center text-white font-bold text-lg rounded'
+                            onClick={() => navigate('/checkout')}>
                             Checkout Now (PKR {totalPrice.toFixed(2)})
                         </button>
                     </div>
