@@ -22,7 +22,7 @@ import SellerActivaetionPage from './pages/SellerActivaetionPage'
 
 import SellerProtectedRoute from '../routes/SellerProtectedRoute'
 import ProfileRoutes from '../routes/ProfileRoutes'
-import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons, ShopAllOrders, ShopWithDrawMoneyPage, ShopInboxPage, ShopAllRefunds, ShopSettingsPage } from '../routes/ShopRoutes'
+import { ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopHomepage, ShopLoginPage, ShopAllEvents, ShopCreateEvent, ShopAllCoupons, ShopAllOrders, ShopWithDrawMoneyPage, ShopInboxPage, ShopAllRefunds, ShopSettingsPage, ShopOrderDetails } from '../routes/ShopRoutes'
 import { getAllProducts } from './redux/actions/product'
 import CheckoutPage from './pages/CheckoutPage'
 import PaymentPage from './pages/PaymentPage'
@@ -183,10 +183,20 @@ const App = () => {
           }
         />
 
+        <Route
+          path="/dashboard/order/:id"
+          element={
+            <ProtectedRoute>
+              <ShopOrderDetails />
+            </ProtectedRoute>
+          }
+        />
+
 
 
 
         <Route path="/user/order/:id" element={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />
+
 
 
       </Routes>

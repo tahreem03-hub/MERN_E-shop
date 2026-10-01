@@ -33,6 +33,29 @@ const productSchema = new schema({
             type: String,
         },
     ],
+    reviews: [
+        {
+            user: {
+                type: Object,
+            },
+            rating: {
+                type: Number,
+            },
+            comment: {
+                type: String,
+            },
+            productId: {
+                type: String,
+            },
+            createdAt: {
+                type: Date,
+                default: Date.now(),
+            }
+        },
+    ],
+    ratings: {
+        type: Number,
+    },
     shopId: {
         type: String,
         required: true,
@@ -51,4 +74,4 @@ const productSchema = new schema({
     }
 })
 
-module.exports=mongoose.model('Product', productSchema);
+module.exports = mongoose.model('Product', productSchema);
